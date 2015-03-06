@@ -33,26 +33,22 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 	private Claim[] claims;
 	
 	private Article startAt;
+	private Connection connect;
 	
-	
-	public PersonendatenTask(WikimediaConnection con, WikimediaConnection wikipedia, String kat, Claim...claims) {
+	public PersonendatenTask(WikimediaConnection con, WikimediaConnection wikipedia, Connection connect, String kat, Claim...claims) {
 		super(con,wikipedia);
 		this.kat = kat;
 		this.claims = claims;
+		this.connect = connect;
 	}
 
 	@Override
 	public void run() {
-		String password = "w.OKSiCokU4Ntpd";
 		
 		
 		Reference ref = new Reference(new Property(143), new ItemSnak(48183));
 		
 		try {
-			Connection connect = null;
-			
-			Class.forName("com.mysql.jdbc.Driver");
-			connect = DriverManager.getConnection("jdbc:mysql://localhost/kasparbot?user=kasparbot&password="+password);
 			
 			PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO gnddata (gnd, wikibase) VALUES (?,?)");
 			SimpleDateFormat log = new SimpleDateFormat("HH:mm:ss");

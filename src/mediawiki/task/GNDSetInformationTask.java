@@ -30,9 +30,11 @@ import static main.GNDSetInformation.importPlace;
 public class GNDSetInformationTask extends WikimediaTask {
 
 	final int version = 9; 
+	private Connection connect;
 	
-	public GNDSetInformationTask(WikimediaConnection con) {
+	public GNDSetInformationTask(WikimediaConnection con, Connection mysql) {
 		super(con);
+		connect = mysql;
 	}
 
 	@Override
@@ -42,13 +44,8 @@ public class GNDSetInformationTask extends WikimediaTask {
 			String password = "w.OKSiCokU4Ntpd";
 			
 			
-			Connection connect = null;
-			
 			SimpleDateFormat log = new SimpleDateFormat("HH:mm:ss");
-			
 			  
-			Class.forName("com.mysql.jdbc.Driver");
-			connect = DriverManager.getConnection("jdbc:mysql://localhost/kasparbot?user=kasparbot&password="+password);
 			
 			Statement statement = connect.createStatement();
 			PreparedStatement preparedStatement = connect.prepareStatement("UPDATE gnddata SET version = '"+version+"' WHERE ID = ?");
