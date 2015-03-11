@@ -8,7 +8,7 @@ import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;
 
 
-public class ContentRequest extends WikimediaRequest {
+public class ContentRequest extends WikimediaRequest<String> {
 
 	
 	public ContentRequest(String titles) {
@@ -16,7 +16,7 @@ public class ContentRequest extends WikimediaRequest {
 	}
 
 	@Override
-	public Object request(WikimediaConnection c) throws Exception {
+	public String request(WikimediaConnection c) throws Exception {
 		WikimediaPostRequest p = new WikimediaPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "query");

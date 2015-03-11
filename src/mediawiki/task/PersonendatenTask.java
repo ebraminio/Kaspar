@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import mediawiki.ArticleDenier;
 import mediawiki.WikidataQuery;
 import mediawiki.WikimediaConnection;
 import mediawiki.info.Article;
@@ -35,18 +36,21 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 	private Article startAt;
 	private Connection connect;
 	
+	private Reference ref;
+	private ArticleDenier denier;
+	
 	public PersonendatenTask(WikimediaConnection con, WikimediaConnection wikipedia, Connection connect, String kat, Claim...claims) {
 		super(con,wikipedia);
 		this.kat = kat;
 		this.claims = claims;
 		this.connect = connect;
+		
+		ref = new Reference(new Property(143), new ItemSnak(48183));
 	}
 
 	@Override
 	public void run() {
 		
-		
-		Reference ref = new Reference(new Property(143), new ItemSnak(48183));
 		
 		try {
 			
@@ -62,11 +66,13 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 					f = false;
 				if(f)
 					continue;
+				if(denier != null && denier.isDeniable(a))
+					continue;
 				try{
 					String base = (String) getWikipediaConnection().request(new WikiBaseItemRequest(a));
 					if(base == null)
 						continue;
-					HashMap<String,String> t = (HashMap<String, String>) getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Personendaten"));
+					HashMap<String,String> t = getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Personendaten"));
 					if(t != null){
 						String desc = t.get("KURZBESCHREIBUNG");
 						if(desc != null){
@@ -95,7 +101,7 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 					HashMap<String,String> n = (HashMap<String, String>) getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Normdaten"));
 					if(n != null){
 						if(n.get("GND") != null && ! n.get("GND").equals("")){
-							if(addClaim(getConnection(), base, new Claim(new Property(227),new StringSnak(n.get("GND"))), ref, "processed by Kaspar using authority data on dewiki")){
+							if(addClaim(getConnection(), base, new Claim(new Property(227),new StringSnak(n.get("GND"))), ref, "processed by Kaspar using authority data on dewiki") != null){
 								preparedStatement.setString(1, n.get("GND"));
 								preparedStatement.setString(2, base);
 								preparedStatement.execute();
@@ -141,5 +147,21 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 	
 	public Article getStartAt() {
 		return startAt;
+	}
+
+	public Reference getReference() {
+		return ref;
+	}
+
+	public void setReference(Reference ref) {
+		this.ref = ref;
+	}
+
+	public ArticleDenier getDenier() {
+		return denier;
+	}
+
+	public void setDenier(ArticleDenier denier) {
+		this.denier = denier;
 	}
 }

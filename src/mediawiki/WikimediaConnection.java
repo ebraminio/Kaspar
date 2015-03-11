@@ -9,7 +9,7 @@ import mediawiki.request.LogoutRequest;
 import mediawiki.request.ManipulativeRequest;
 
 
-public class WikimediaConnection {
+public class WikimediaConnection implements Cloneable {
 
 	private String wikiname = "";
 	private String apihref = "";
@@ -21,9 +21,10 @@ public class WikimediaConnection {
 	
 	private HashMap<String, String> cookies = new HashMap<>();
 	
-	private Map<Class<? extends WikimediaRequest>, Integer> statistic = new HashMap<>();
+	private Map<Class<? extends WikimediaRequest<?>>, Integer> statistic = new HashMap<>();
 	
 	private final Object editsynchronizer = new Object();
+	private WikimediaRequest<?> r;
 	
 	public WikimediaConnection(String apihref){
 		setApihref(apihref);
@@ -51,11 +52,11 @@ public class WikimediaConnection {
 		this.apihref = apihref;
 	}
 
-	public Object request(WikimediaRequest r) throws Exception{
-		if(r instanceof LoginRequest)
+	public <T> T request(WikimediaRequest<T> r) throws Exception{
+	if(r instanceof LoginRequest)
 			setLoginRequest((LoginRequest)r);
 		log(r);
-		Object o = null;
+		T o = null;
 		if(r instanceof ManipulativeRequest){
 			synchronized(editsynchronizer){
 				o = r.request(this);
@@ -66,11 +67,11 @@ public class WikimediaConnection {
 		return o;
 	}
 	
-	private void log(WikimediaRequest r){
+	private void log(WikimediaRequest<?> r){
 		if(statistic.containsKey(r.getClass())){
-			statistic.put(r.getClass(), statistic.get(r.getClass())+1);
+			statistic.put((Class<? extends WikimediaRequest<?>>) r.getClass(), statistic.get(r.getClass())+1);
 		}else{
-			statistic.put(r.getClass(), 1);
+			statistic.put((Class<? extends WikimediaRequest<?>>) r.getClass(), 1);
 		}
 	}
 	
@@ -131,7 +132,7 @@ public class WikimediaConnection {
 		return request(getLoginRequest());
 	}
 	
-	public Map<Class<? extends WikimediaRequest>, Integer> getStatistic(){
+	public Map<Class<? extends WikimediaRequest<?>>, Integer> getStatistic(){
 		return statistic;
 	}
 

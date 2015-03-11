@@ -14,7 +14,7 @@ import mediawiki.info.wikibase.Snak;
 import mediawiki.info.wikibase.Statement;
 
 
-public class GetSpecificStatementRequest extends WikimediaRequest {
+public class GetSpecificStatementRequest extends WikimediaRequest<ArrayList<Statement>> {
 
 	private Snak<?> entity = null;
 	

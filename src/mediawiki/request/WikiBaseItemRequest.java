@@ -9,7 +9,7 @@ import mediawiki.WikimediaRequest;
 import mediawiki.info.Article;
 
 
-public class WikiBaseItemRequest extends WikimediaRequest {
+public class WikiBaseItemRequest extends WikimediaRequest<String> {
 
 	public WikiBaseItemRequest(Article a) {
 		setProperty("pageids", a.getPageid());
@@ -31,7 +31,9 @@ public class WikiBaseItemRequest extends WikimediaRequest {
 		p.putData("prop", "pageprops");
 		Document d = p.requestDocument();
 		if(d.getRootElement().getChildren("query").get(0).getChildren("pages").get(0).getChildren("page").get(0).getChildren("pageprops").size() == 0)
-			throw new WikimediaException("No specific information available");
+			return null;
+		if(d.getRootElement().getChildren("query").get(0).getChildren("pages").get(0).getChildren("page").get(0).getChildren("pageprops").get(0).getAttribute("wikibase_item") == null)
+			return null;
 		return d.getRootElement().getChildren("query").get(0).getChildren("pages").get(0).getChildren("page").get(0).getChildren("pageprops").get(0).getAttribute("wikibase_item").getValue();
 	}
 

@@ -9,10 +9,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import javat.xml.Element;
 import datasets.in.GND;
+import datasets.in.MARC;
 import mediawiki.WikimediaConnection;
 import mediawiki.WikimediaTask;
 import mediawiki.info.wikibase.Claim;
@@ -22,6 +25,7 @@ import mediawiki.info.wikibase.WikibaseDate;
 import mediawiki.info.wikibase.snaks.DateSnak;
 import mediawiki.info.wikibase.snaks.ItemSnak;
 import mediawiki.info.wikibase.snaks.StringSnak;
+import mediawiki.request.wikibase.AddQualifierRequest;
 import mediawiki.request.wikibase.GetLabelRequest;
 import mediawiki.request.wikibase.SetLabelRequest;
 
@@ -41,7 +45,6 @@ public class GNDSetInformationTask extends WikimediaTask {
 	public void run() {
 		try{
 			WikimediaConnection wikidata = getConnection();
-			String password = "w.OKSiCokU4Ntpd";
 			
 			
 			SimpleDateFormat log = new SimpleDateFormat("HH:mm:ss");
@@ -49,14 +52,13 @@ public class GNDSetInformationTask extends WikimediaTask {
 			
 			Statement statement = connect.createStatement();
 			PreparedStatement preparedStatement = connect.prepareStatement("UPDATE gnddata SET version = '"+version+"' WHERE ID = ?");
-			
-			ResultSet r = statement.executeQuery("SELECT * FROM gnddata WHERE (gnd IS NOT NULL AND version < "+version+") ORDER BY version ASC, ID DESC");
+			ResultSet r = statement.executeQuery("SELECT * FROM gnddata WHERE  (gnd IS NOT NULL AND version < "+version+") ORDER BY version ASC, ID DESC");
 			while(r.next()){
 				try{
 					Reference ref = new Reference();
 					ref.addClaim(new Claim(248, 36578));
 					ref.addClaim(new Claim(new Property(813), new DateSnak(new WikibaseDate(WikibaseDate.ONE_DAY))));
-					ref.addClaim(new Claim(new Property(227), new StringSnak(r.getString("gnd"))));
+			//		ref.addClaim(new Claim(new Property(227), new StringSnak(r.getString("gnd"))));
 					
 					Element e = null;
 					try{
@@ -65,11 +67,24 @@ public class GNDSetInformationTask extends WikimediaTask {
 						continue;
 					}
 					System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\t"+r.getString("wikibase")+"\t"+r.getString("gnd"));
+					
+					MARC marc = null;
+					
 					if(e.getChildren("dateOfBirth").size() > 0){
-						importDate(wikidata, e.getChildren("dateOfBirth").get(0).getText(),  r.getString("wikibase"), new Property(569), ref);
+						marc = GND.getMARCEntry(r.getString("gnd"));
+						mediawiki.info.wikibase.Statement s = importDate(wikidata, e.getChildren("dateOfBirth").get(0).getText(),  r.getString("wikibase"), new Property(569), ref);
+						if(isGeborenCa(marc) && s != null){
+							getConnection().request(new AddQualifierRequest(s, new Claim(1480,5727902)));
+							System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\tCirca-Qualifier created");
+						}
 					}
 					if(e.getChildren("dateOfDeath").size() > 0){
-						importDate(wikidata, e.getChildren("dateOfDeath").get(0).getText(),  r.getString("wikibase"), new Property(570), ref);
+						marc = (marc != null ? marc : GND.getMARCEntry(r.getString("gnd")));
+						mediawiki.info.wikibase.Statement s = importDate(wikidata, e.getChildren("dateOfDeath").get(0).getText(),  r.getString("wikibase"), new Property(570), ref);
+						if(isGestorbenCa(marc) && s != null) {
+							getConnection().request(new AddQualifierRequest(s, new Claim(1480,5727902)));
+							System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\tCirca-Qualifier created");
+						}
 					}
 					if(e.getChildren("gender").size() > 0){
 						ItemSnak i = null;
@@ -208,6 +223,59 @@ public class GNDSetInformationTask extends WikimediaTask {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	private static boolean isGeborenCa(MARC m){
+		for(HashMap<String, ArrayList<String>> f : m.getDatafield("548")){
+			if(! (f.get("i").get(0).equals("Lebensdaten") || f.get("i").get(0).equals("Exakte Lebensdaten"))){
+				continue;
+			}
+			if(f.get("9").size() <= 1)
+				continue;
+			String angabe = f.get("9").get(1);
+			angabe = angabe.substring("v:".length());
+			switch(angabe){
+			case "Geburts- u. Todesjahr ca." :
+			case "ca." : return true;
+			case "genaues Todesdatum unbekannt":
+			case "Geburtsjahr ca." : return true;
+			}
+			
+			if(angabe.indexOf("Geburtsjahr ca.") >= 0 || angabe.indexOf("Geburts- u. Todesjahr ca.") >= 0)
+				return true;
+			
+			if(f.get("a").get(0).matches("ca\\.[\\s\\/\\w.]+\\-[\\s\\/\\w.]+"))
+				return true;
+		}
+		return false;
+	}
+	
+	private static boolean isGestorbenCa(MARC m){
+		for(HashMap<String, ArrayList<String>> f : m.getDatafield("548")){
+			if(! (f.get("i").get(0).equals("Lebensdaten") || f.get("i").get(0).equals("Exakte Lebensdaten"))){
+				continue;
+			}
+			if(f.get("9").size() <= 1)
+				continue;
+			String angabe = f.get("9").get(1);
+			angabe = angabe.substring("v:".length());
+			angabe = angabe.replaceAll("Todessjahr", "Todesjahr");
+			
+			switch(angabe){
+			case "Geburts- u. Todesjahr ca." :
+			case "ca." : return true;
+			case "genaues Todesdatum unbekannt":
+			case "Todesjahr ca." : 
+			case "Sterbejahr ca." : return true;
+			}
+			
+			if(angabe.indexOf("Sterbejahr ca.") >= 0 || angabe.indexOf("genaues Todesdatum unbekannt") >= 0 || angabe.indexOf("Todesjahr ca.") >= 0 || angabe.indexOf("Geburts- u. Todesjahr ca.") >= 0)
+				return true;
+			
+			if(f.get("a").get(0).matches("[\\s\\/\\w.]+\\-ca\\.[\\s\\/\\w.]+"))
+				return true;
+		}
+		return false;
 	}
 
 }

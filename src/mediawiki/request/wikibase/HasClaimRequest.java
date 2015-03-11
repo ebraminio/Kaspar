@@ -8,7 +8,7 @@ import mediawiki.WikimediaRequest;
 import mediawiki.info.wikibase.Property;
 
 
-public class HasClaimRequest extends WikimediaRequest {
+public class HasClaimRequest extends WikimediaRequest<Boolean> {
 
 	public HasClaimRequest(String entity) {
 		setProperty("entity", entity);

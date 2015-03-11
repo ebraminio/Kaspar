@@ -7,13 +7,18 @@ import javat.xml.Element;
 
 import mediawiki.WikimediaConnection;
 import mediawiki.WikimediaRequest;
+import mediawiki.info.Article;
 
 
-public class GetTemplateValuesRequest extends WikimediaRequest {
+public class GetTemplateValuesRequest extends WikimediaRequest<HashMap<String, String>> {
 
 	private String title;
 	private String template;
 	
+	
+	public GetTemplateValuesRequest(Article article, String template){
+		this(article.getTitle(), template);
+	}
 	
 	public GetTemplateValuesRequest(String title, String template){
 		this.title = title;

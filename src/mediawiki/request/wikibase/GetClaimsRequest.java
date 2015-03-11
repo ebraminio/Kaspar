@@ -9,7 +9,7 @@ import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;
 
 
-public class GetClaimsRequest extends WikimediaRequest {
+public class GetClaimsRequest extends WikimediaRequest<ArrayList<Element>> {
 
 	public GetClaimsRequest(String base) {
 		setProperty("entity", base);

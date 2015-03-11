@@ -7,7 +7,7 @@ import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;
 
 
-public class GetLabelRequest extends WikimediaRequest {
+public class GetLabelRequest extends WikimediaRequest<String> {
 
 	public GetLabelRequest(String language, String base) {
 		super();

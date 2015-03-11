@@ -21,4 +21,11 @@ public class GND {
 		
 	}
 	
+	public static MARC getMARCEntry(String gnd) throws IOException, XMLStreamException, SAXException{
+		GetRequest g = new GetRequest("http://d-nb.info/gnd/"+gnd+"/about/marcxml");
+		String s = g.request();
+		Document d = Document.load(new ByteArrayInputStream(s.getBytes()));
+		return new MARC(d.getRootElement());
+	}
+	
 }

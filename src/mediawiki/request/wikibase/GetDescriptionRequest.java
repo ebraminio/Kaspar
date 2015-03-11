@@ -8,7 +8,7 @@ import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;
 
 
-public class GetDescriptionRequest extends WikimediaRequest {
+public class GetDescriptionRequest extends WikimediaRequest<String> {
 
 	public GetDescriptionRequest(String entity, String language){
 		setProperty("languages", language);

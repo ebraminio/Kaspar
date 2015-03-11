@@ -3,6 +3,7 @@ package mediawiki.info.wikibase;
 import javat.xml.Element;
 import mediawiki.JSONizable;
 import mediawiki.XMLRepresented;
+import mediawiki.info.wikibase.snaks.CommonsSnak;
 import mediawiki.info.wikibase.snaks.DateSnak;
 import mediawiki.info.wikibase.snaks.ItemSnak;
 import mediawiki.info.wikibase.snaks.StringSnak;
@@ -48,6 +49,7 @@ public abstract class Snak<T> extends XMLRepresented implements JSONizable {
 		case "string"			: 	return new StringSnak(null);
 		case "url"				: 	return new URLSnak(null);
 		case "time"				: 	return new DateSnak(null);
+		case "commonsMedia"		:	return new CommonsSnak(null);
 		}
 		return null;
 	}

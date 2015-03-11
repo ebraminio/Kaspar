@@ -15,6 +15,11 @@ public class Claim extends XMLRepresented {
 		setSnak(e);
 	}
 	
+	public Claim(int p, Snak<?> e){
+		this(new Property(p), e);
+	}
+	
+	@Deprecated
 	public Claim(int p, int e){
 		this(new Property(p), new ItemSnak(e));
 	}

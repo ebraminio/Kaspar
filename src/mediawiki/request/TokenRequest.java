@@ -7,7 +7,7 @@ import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;
 
 
-public class TokenRequest extends WikimediaRequest {
+public class TokenRequest extends WikimediaRequest<String> {
 
 	private String type = "csrf";
 	

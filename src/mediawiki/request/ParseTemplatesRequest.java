@@ -8,7 +8,7 @@ import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;
 
 
-public class ParseTemplatesRequest extends WikimediaRequest {
+public class ParseTemplatesRequest extends WikimediaRequest<Document> {
 
 	public ParseTemplatesRequest(String wikitext) {
 		setProperty("text", wikitext);

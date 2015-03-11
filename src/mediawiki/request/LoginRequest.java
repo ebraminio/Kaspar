@@ -8,7 +8,7 @@ import mediawiki.WikimediaRequest;
 import javat.xml.Document;
 import javat.xml.Element;
 
-public class LoginRequest extends WikimediaRequest {
+public class LoginRequest extends WikimediaRequest<Object> {
 
 	private String user;
 	private String password;

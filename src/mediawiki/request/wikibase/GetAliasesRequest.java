@@ -10,7 +10,7 @@ import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;
 import mediawiki.info.wikibase.TranslatedContent;
 
-public class GetAliasesRequest extends WikimediaRequest {
+public class GetAliasesRequest extends WikimediaRequest<TranslatedContent<ArrayList<String>>> {
 
 	public GetAliasesRequest(String base, String...languages){
 		setProperty("ids", base);
