@@ -16,6 +16,7 @@ import main.GNDLoad;
 import mediawiki.ArticleDenier;
 import mediawiki.WikimediaConnection;
 import mediawiki.WikimediaTask;
+import mediawiki.WikimediaUtil;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
@@ -24,17 +25,19 @@ import mediawiki.info.wikibase.Statement;
 import mediawiki.info.wikibase.snaks.ItemSnak;
 import mediawiki.info.wikibase.snaks.StringSnak;
 import mediawiki.request.CategoryMemberRequest;
+import mediawiki.request.ContentRequest;
+import mediawiki.request.EditRequest;
 import mediawiki.request.GetTemplateValuesRequest;
 import mediawiki.request.TemplateEmbeddedInRequest;
 import mediawiki.request.WikiBaseItemRequest;
+import mediawiki.request.wikibase.CreateClaimRequest;
 import mediawiki.request.wikibase.GetSpecificStatementRequest;
+import mediawiki.request.wikibase.SetReferenceRequest;
 
 public class NormdatenTask2 extends WikipediaWikidataTask {
 
-	private Article startAt;
 	
 	private Reference ref;
-	private ArticleDenier denier;
 	
 	public NormdatenTask2(WikimediaConnection wikidata, WikimediaConnection wikipedia){
 		super(wikidata, wikipedia);
@@ -49,8 +52,6 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 			TemplateEmbeddedInRequest p = new TemplateEmbeddedInRequest("Template:Authority control",0);
 			p.setProperty("eidir", "descending");
 			articles = (List<Article>) getWikipediaConnection().request(p);
-			setTogo(articles.size());
-			recordETA();
 			System.out.println("Alles geladen");
 			
 			InputStream in = NormdatenTask2.class.getResourceAsStream("authoritycontrol.json");
@@ -61,62 +62,61 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 				b.append(buffer);
 			}
 			in.close();
-			JSONObject ac = new JSONObject(b.toString());
+			final JSONObject ac = new JSONObject(b.toString());
 			
-			
-			boolean f = (startAt == null ? false : true);
 			for(Article a : articles){
-				if(isStopped())
-					return;
-				if(a.isIdentical(startAt))
-					f = false;
-				if(f){
-					increaseDone();
-					continue;
-				}
-				if(denier != null && denier.isDeniable(a)){
-					increaseDone();
-					continue;
-				}
 				try{
 					String base = (String) getWikipediaConnection().request(new WikiBaseItemRequest(a));
 					if(base == null){
-						increaseDone();
-						continue;
-					}
-					
-					Statement instance = getConnection().request(new GetSpecificStatementRequest(base, new Property(31))).get(0);
-					int instancevalue = ((ItemSnak)instance.getClaim().getSnak()).getValue();
-					
-					int[] skip = new int[]{4167410, 4167836, 13406463, 15138389};
-					if(Arrays.asList(skip).contains(instancevalue)) {
-						System.err.println("Q"+instancevalue+ " isn't supported");
 						continue;
 					}
 					
 					HashMap<String,String> t = getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Authority control"));
 					
+					boolean removable = true;
+					
 					for(Entry<String, String> e : t.entrySet()){
-						
+						if(ac.getString(e.getKey()) == null){
+							removable = false;
+						}else{
+							String value = e.getKey().equals("LCCN") ? WikimediaUtil.formatLCCN(e.getValue()) : e.getValue();
+							if(! value.matches(ac.getJSONObject(e.getKey()).getString("pattern"))){
+								removable = false;
+							}else{
+								List<Statement> l = getConnection().request(new GetSpecificStatementRequest(base, new Property(ac.getJSONObject(e.getKey()).getInt("property"))));
+								if(l.size() == 0){
+									Statement s = getConnection().request(new CreateClaimRequest(base, new Claim(ac.getJSONObject(e.getKey()).getInt("property"), new StringSnak(value))));
+									if(s == null){
+										removable = false;
+									}else{
+										getConnection().request(new SetReferenceRequest(s, getReference()));
+									}
+								}else{
+									boolean flag2 = false;
+									for(Statement s : l){
+										if(s.getClaim().getSnak().getValue().equals(value)){
+											flag2 = true;
+										}
+									}
+									removable = flag2 ? removable : false;
+								}
+							}
+						}
+					}
+					
+					if(removable){
+						String old = getWikipediaConnection().request(new ContentRequest(a));
+						String nw  = old.replaceAll("\\{\\{Authority\\ control[\\|A-Za-z0-9\\=\\ \\/\\-]+\\}\\}", "{{Authority control}}");
+						getWikipediaConnection().request(new EditRequest(a, nw, "authority control moved to wikidata"));
 					}
 				}catch(Exception e){
 					e.printStackTrace();
 					continue;
 				}
-				increaseDone();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	public void setStartAt(Article startAt) {
-		this.startAt = startAt;
-	}
-	
-	public Article getStartAt() {
-		return startAt;
 	}
 
 	public Reference getReference() {
@@ -127,11 +127,4 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 		this.ref = ref;
 	}
 
-	public ArticleDenier getDenier() {
-		return denier;
-	}
-
-	public void setDenier(ArticleDenier denier) {
-		this.denier = denier;
-	}
 }

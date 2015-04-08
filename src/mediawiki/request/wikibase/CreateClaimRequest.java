@@ -15,7 +15,7 @@ import mediawiki.request.TokenRequest;
 import org.json.JSONException;
 
 
-public class CreateClaimRequest extends WikimediaRequest<Object>  implements ManipulativeRequest{
+public class CreateClaimRequest extends WikimediaRequest<Statement>  implements ManipulativeRequest{
 
 	public CreateClaimRequest(String entity, Property prop, Snak<?> value) throws JSONException {
 		setProperty("entity", entity);
