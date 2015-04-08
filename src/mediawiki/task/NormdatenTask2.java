@@ -66,10 +66,16 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 			
 			for(Article a : articles){
 				try{
+					if(getWikipediaConnection().request(new GetTemplateValuesRequest(a, "bots")) != null){
+						continue;
+					}
+					
+					
 					String base = (String) getWikipediaConnection().request(new WikiBaseItemRequest(a));
 					if(base == null){
 						continue;
 					}
+					
 					
 					HashMap<String,String> t = getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Authority control"));
 					

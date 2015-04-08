@@ -28,13 +28,15 @@ public class GetTemplateValuesRequest extends WikimediaRequest<HashMap<String, S
 	@Override
 	public HashMap<String, String> request(WikimediaConnection c) throws Exception {
 		
-		HashMap<String, String> r = new HashMap<>();
+		HashMap<String, String> r = null;
 		
 		String text = (String) c.request(new ContentRequest(title));
 		Document d = (Document) c.request(new ParseTemplatesRequest(text,title));
 		
+		
 		for(Element e : d.getRootElement().getChildren("template")){
 			if(e.getChildren("title").get(0).getText().trim().equalsIgnoreCase(template)){
+				r = new HashMap<>();
 				int i = 1;
 				for(Element e2 : e.getChildren("part")){
 					String key = e2.getChildren("name").get(0).getText().trim();
