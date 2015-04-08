@@ -1,23 +1,38 @@
 package mediawiki;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.content.AbstractContentBody;
+import org.apache.http.entity.mime.content.StringBody;
+
 abstract public class WikimediaRequest<T extends Object> {
 
-	private HashMap<String, String> data = new HashMap<>();
+	private HashMap<String, AbstractContentBody> data = new HashMap<>();
 	
 	abstract public T request(WikimediaConnection c) throws Exception;
 
 	public void setProperty(String k, Object v){
-		data.put(k, v.toString());
+		setProperty(k, v.toString());
 	}
 	
-	public String getProperty(String k){
-		return data.get(k);
+	public void setProperty(String k, AbstractContentBody v){
+		data.put(k, v);
 	}
 	
-	public Map<String,String> getProperties(){
+	public void setProperty(String k, String v) {
+		try {
+			setProperty(k, new StringBody(v, "text/plain", Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public Map<String, AbstractContentBody> getProperties(){
 		return data;
 	}
 }

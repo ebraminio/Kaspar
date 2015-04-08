@@ -14,7 +14,7 @@ public class ItemSnak extends Snak<Integer> {
 	public ItemSnak(Integer value) {
 		super(value);
 	}
-
+	
 	@Override
 	public JSONObject toJSONObject() throws JSONException {
 		JSONObject value = new JSONObject();

@@ -2,7 +2,10 @@ package mediawiki;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
+
+import org.apache.http.entity.mime.MultipartEntity;
 
 import javat.xml.Document;
 
@@ -11,7 +14,7 @@ public class WikimediaPostRequest extends PostRequest {
 
 	private WikimediaConnection con = null;
 	
-	public WikimediaPostRequest(WikimediaConnection c) {
+	public WikimediaPostRequest(WikimediaConnection c) throws UnsupportedEncodingException {
 		super(c.getApihref());
 		this.con = c;
 		putData("format", "xml");

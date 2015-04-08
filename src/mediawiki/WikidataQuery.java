@@ -42,7 +42,7 @@ public class WikidataQuery {
 	public List<Integer> request() throws IOException, JSONException{
 		JSONObject o = null;
 		try{
-			PostRequest p = new PostRequest(getApiUrl());
+			SimplePostRequest p = new SimplePostRequest(getApiUrl());
 			p.putData("q", getQuery());
 			String r = p.request();
 			o = new JSONObject(r);

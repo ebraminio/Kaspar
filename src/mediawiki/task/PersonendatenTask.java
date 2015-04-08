@@ -24,6 +24,7 @@ import mediawiki.request.CategoryMemberRequest;
 import mediawiki.request.GetTemplateValuesRequest;
 import mediawiki.request.WikiBaseItemRequest;
 import mediawiki.request.wikibase.GetDescriptionRequest;
+import mediawiki.request.wikibase.GetSpecificStatementRequest;
 import mediawiki.request.wikibase.SetDescriptionRequest;
 
 import static main.GNDLoad.addClaim;
@@ -55,34 +56,50 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 		try {
 			
 			PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO gnddata (gnd, wikibase) VALUES (?,?)");
+			PreparedStatement preparedStatement2 = connect.prepareStatement("SELECT * FROM gnddata WHERE gnd = ? AND wikibase = ?");
 			SimpleDateFormat log = new SimpleDateFormat("HH:mm:ss");
 			
 			List<Article> articles = (List<Article>) getWikipediaConnection().request(new CategoryMemberRequest(kat,0));
+			setTogo(articles.size());
+			recordETA();
 			
 			boolean f = (startAt == null ? false : true);
 			
 			for(Article a : articles){
+				if(isStopped())
+					return;
 				if(a.isIdentical(startAt))
 					f = false;
-				if(f)
+				if(f){
+					increaseDone();
 					continue;
-				if(denier != null && denier.isDeniable(a))
+				}
+				if(denier != null && denier.isDeniable(a)){
+					increaseDone();
 					continue;
+				}
 				try{
 					String base = (String) getWikipediaConnection().request(new WikiBaseItemRequest(a));
-					if(base == null)
+					if(base == null){
+						increaseDone();
 						continue;
+					}
+					if(getConnection().request(new GetSpecificStatementRequest(base, new Claim(31, new ItemSnak(5)))).size() == 0){
+						System.err.println(base+" isn't a human!");
+						increaseDone();
+						continue;
+					}
 					HashMap<String,String> t = getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Personendaten"));
 					if(t != null){
 						String desc = t.get("KURZBESCHREIBUNG");
 						if(desc != null){
 							desc = desc.replaceAll("\\[\\[([\\p{IsAlphabetic}\\s]+\\|)?([\\p{IsAlphabetic}\\s]+)\\]\\]", "$2");
-							if(desc.indexOf('[') != -1 || desc.indexOf('{') != -1)
-								continue;
-							String title = (String)getConnection().request(new GetDescriptionRequest(base, "de"));
-							if(title == null){
-								getConnection().request(new SetDescriptionRequest(base, "de", desc, "based on dewiki person data"));
-								System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\t"+base+" has now a description: "+desc);
+							if(desc.indexOf('[') == -1 && desc.indexOf('{') == -1){
+								String title = (String)getConnection().request(new GetDescriptionRequest(base, "de"));
+								if(title == null){
+									getConnection().request(new SetDescriptionRequest(base, "de", desc, "based on dewiki person data"));
+									System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\t"+base+" has now a description: "+desc);
+								}
 							}
 						}
 						if(t.get("GEBURTSDATUM") != null){
@@ -102,9 +119,13 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 					if(n != null){
 						if(n.get("GND") != null && ! n.get("GND").equals("")){
 							if(addClaim(getConnection(), base, new Claim(new Property(227),new StringSnak(n.get("GND"))), ref, "processed by Kaspar using authority data on dewiki") != null){
-								preparedStatement.setString(1, n.get("GND"));
-								preparedStatement.setString(2, base);
-								preparedStatement.execute();
+								preparedStatement2.setString(1, n.get("GND"));
+								preparedStatement2.setString(2, base);
+								if(! preparedStatement2.executeQuery().next()){
+									preparedStatement.setString(1, n.get("GND"));
+									preparedStatement.setString(2, base);
+									preparedStatement.executeUpdate();
+								}
 							}
 						}
 					//	if(n.get("LCCN") != null && ! n.get("LCCN").equals("")){
@@ -131,13 +152,14 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 					e.printStackTrace();
 					continue;
 				}
+				increaseDone();
 			}
 			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		fireCompletedEvent();
 	}
 
 

@@ -4,6 +4,7 @@ import javat.xml.Element;
 import mediawiki.JSONizable;
 import mediawiki.XMLRepresented;
 import mediawiki.info.wikibase.snaks.CommonsSnak;
+import mediawiki.info.wikibase.snaks.CoordinateSnak;
 import mediawiki.info.wikibase.snaks.DateSnak;
 import mediawiki.info.wikibase.snaks.ItemSnak;
 import mediawiki.info.wikibase.snaks.StringSnak;
@@ -50,6 +51,7 @@ public abstract class Snak<T> extends XMLRepresented implements JSONizable {
 		case "url"				: 	return new URLSnak(null);
 		case "time"				: 	return new DateSnak(null);
 		case "commonsMedia"		:	return new CommonsSnak(null);
+		case "globe-coordinate"	:	return new CoordinateSnak(null);
 		}
 		return null;
 	}
@@ -65,5 +67,14 @@ public abstract class Snak<T> extends XMLRepresented implements JSONizable {
 	@Override
 	public String toString() {
 		return super.toString()+"["+getValue().toString()+"]";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		if(! (obj instanceof Snak<?>))
+			return false;
+		return ((Snak<?>) obj).getValue().equals(getValue());
 	}
 }

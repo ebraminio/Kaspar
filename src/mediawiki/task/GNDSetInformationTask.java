@@ -3,6 +3,8 @@ package mediawiki.task;
 import static main.GNDLoad.addClaim;
 import static main.GNDLoad.importDate;
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import javat.xml.Element;
 import datasets.in.GND;
@@ -21,12 +24,16 @@ import mediawiki.WikimediaTask;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
 import mediawiki.info.wikibase.Reference;
+import mediawiki.info.wikibase.TranslatedContent;
 import mediawiki.info.wikibase.WikibaseDate;
 import mediawiki.info.wikibase.snaks.DateSnak;
 import mediawiki.info.wikibase.snaks.ItemSnak;
 import mediawiki.info.wikibase.snaks.StringSnak;
+import mediawiki.request.wikibase.AddAliasesRequest;
 import mediawiki.request.wikibase.AddQualifierRequest;
+import mediawiki.request.wikibase.GetAliasesRequest;
 import mediawiki.request.wikibase.GetLabelRequest;
+import mediawiki.request.wikibase.GetSpecificStatementRequest;
 import mediawiki.request.wikibase.SetLabelRequest;
 
 import static main.GNDSetInformation.importPlace;
@@ -34,11 +41,9 @@ import static main.GNDSetInformation.importPlace;
 public class GNDSetInformationTask extends WikimediaTask {
 
 	final int version = 9; 
-	private Connection connect;
 	
-	public GNDSetInformationTask(WikimediaConnection con, Connection mysql) {
+	public GNDSetInformationTask(WikimediaConnection con) {
 		super(con);
-		connect = mysql;
 	}
 
 	@Override
@@ -50,37 +55,46 @@ public class GNDSetInformationTask extends WikimediaTask {
 			SimpleDateFormat log = new SimpleDateFormat("HH:mm:ss");
 			  
 			
-			Statement statement = connect.createStatement();
-			PreparedStatement preparedStatement = connect.prepareStatement("UPDATE gnddata SET version = '"+version+"' WHERE ID = ?");
-			ResultSet r = statement.executeQuery("SELECT * FROM gnddata WHERE  (gnd IS NOT NULL AND version < "+version+") ORDER BY version ASC, ID DESC");
-			while(r.next()){
+			Scanner scanner = new Scanner(new File("/home/kaspar/gnd_ds.csv"));
+			while(scanner.hasNextLine()){
+				if(isStopped())
+					return;
+				String wikibase = scanner.nextLine().trim();
 				try{
+					if(getConnection().request(new GetSpecificStatementRequest(wikibase, new Claim(31, new ItemSnak(5)))).size() == 0){
+						System.err.println(wikibase+" isn't a human!");
+						increaseDone();
+						continue;
+					}
+					
+					String gnd = (String) getConnection().request(new GetSpecificStatementRequest(wikibase, new Property(227))).get(0).getClaim().getSnak().getValue();
+					
 					Reference ref = new Reference();
 					ref.addClaim(new Claim(248, 36578));
 					ref.addClaim(new Claim(new Property(813), new DateSnak(new WikibaseDate(WikibaseDate.ONE_DAY))));
-			//		ref.addClaim(new Claim(new Property(227), new StringSnak(r.getString("gnd"))));
+			//		ref.addClaim(new Claim(new Property(227), new StringSnak(gnd)));
 					
 					Element e = null;
 					try{
-						e = GND.getGNDEntry(r.getString("gnd"));
+						e = GND.getGNDEntry(gnd);
 					}catch(Exception e2){
 						continue;
 					}
-					System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\t"+r.getString("wikibase")+"\t"+r.getString("gnd"));
+					System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\t"+wikibase+"\t"+gnd);
 					
 					MARC marc = null;
 					
 					if(e.getChildren("dateOfBirth").size() > 0){
-						marc = GND.getMARCEntry(r.getString("gnd"));
-						mediawiki.info.wikibase.Statement s = importDate(wikidata, e.getChildren("dateOfBirth").get(0).getText(),  r.getString("wikibase"), new Property(569), ref);
+						marc = GND.getMARCEntry(gnd);
+						mediawiki.info.wikibase.Statement s = importDate(wikidata, e.getChildren("dateOfBirth").get(0).getText(),  wikibase, new Property(569), ref);
 						if(isGeborenCa(marc) && s != null){
 							getConnection().request(new AddQualifierRequest(s, new Claim(1480,5727902)));
 							System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\tCirca-Qualifier created");
 						}
 					}
 					if(e.getChildren("dateOfDeath").size() > 0){
-						marc = (marc != null ? marc : GND.getMARCEntry(r.getString("gnd")));
-						mediawiki.info.wikibase.Statement s = importDate(wikidata, e.getChildren("dateOfDeath").get(0).getText(),  r.getString("wikibase"), new Property(570), ref);
+						marc = (marc != null ? marc : GND.getMARCEntry(gnd));
+						mediawiki.info.wikibase.Statement s = importDate(wikidata, e.getChildren("dateOfDeath").get(0).getText(),  wikibase, new Property(570), ref);
 						if(isGestorbenCa(marc) && s != null) {
 							getConnection().request(new AddQualifierRequest(s, new Claim(1480,5727902)));
 							System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\tCirca-Qualifier created");
@@ -98,70 +112,75 @@ public class GNDSetInformationTask extends WikimediaTask {
 						}
 						if(i != null){
 							Claim claim = new Claim(new Property(21),i);
-							addClaim(wikidata, r.getString("wikibase"), claim, ref);
+							addClaim(wikidata, wikibase, claim, ref);
 						}
 					}
-					if(e.getChildren("sameAs").size() > 0){
+				/*	VIAF disabled! 
+				 * if(e.getChildren("sameAs").size() > 0){
 						for(Element viaf : e.getChildren("sameAs")){
 							if(viaf.getAttribute("resource").getValue().startsWith("http://viaf.org/viaf/")){
-								addClaim(wikidata,  r.getString("wikibase"), new Claim(new Property(214),new StringSnak(viaf.getAttribute("resource").getValue().substring("http://viaf.org/viaf/".length()))), ref);
+								addClaim(wikidata,  wikibase, new Claim(new Property(214),new StringSnak(viaf.getAttribute("resource").getValue().substring("http://viaf.org/viaf/".length()))), ref);
 							}
 						}
-					}
+					} */
 					if(e.getChildren("preferredNameEntityForThePerson").size() > 0 && e.getChildren("preferredNameEntityForThePerson").get(0).getChildren("forename").size() == 1 && e.getChildren("preferredNameEntityForThePerson").get(0).getChildren("surname").size() == 1){
-						String name = e.getChildren("preferredNameEntityForThePerson").get(0).getChildren("forename").get(0).getText()+" "+
-								e.getChildren("preferredNameEntityForThePerson").get(0).getChildren("surname").get(0).getText();
+						String name = e.getChildren("preferredNameEntityForThePerson").get(0).getChildren("forename").get(0).getText()+" ";
+						if(e.getChildren("preferredNameEntityForThePerson").get(0).getChildren("prefix").size() > 0){
+							name += e.getChildren("preferredNameEntityForThePerson").get(0).getChildren("prefix").get(0).getText()+" ";
+						}
+						name +=	e.getChildren("preferredNameEntityForThePerson").get(0).getChildren("surname").get(0).getText();
 						name = name.replaceAll("\\- ", "-");
-						if(name.indexOf(".")  == -1){
-							for(String lang : new String[]{"de","en","fr"}){
-								if(wikidata.request(new GetLabelRequest(lang, r.getString("wikibase"))) == null){
-									wikidata.request(new SetLabelRequest(r.getString("wikibase"), lang, name));
+						name = name.replaceAll("  ", " ");
+						if(name.indexOf(".") == -1){
+							for(String lang : new String[]{"de","en","fr","es","nl"}){
+								if(wikidata.request(new GetLabelRequest(lang, wikibase)) == null){
+									wikidata.request(new SetLabelRequest(wikibase, lang, name));
 									System.out.println("Label für "+lang+" erstellt: "+name);
 								}
 							}
 						}
 					}
 					try{
-						importPlace(wikidata, connect, r.getString("wikibase"), e, "placeOfBirth", 19, ref, "place", "CLAIM[131]");
+						importPlace(wikidata, wikibase, e, "placeOfBirth", 19, ref, "place", "CLAIM[131]");
 					}catch(Exception exception){exception.printStackTrace(); continue;}
 					try{
-						importPlace(wikidata, connect,  r.getString("wikibase"), e, "placeOfDeath", 20, ref, "place", "CLAIM[131]");
+						importPlace(wikidata,  wikibase, e, "placeOfDeath", 20, ref, "place", "CLAIM[131]");
 					}catch(Exception exception){exception.printStackTrace(); continue;}
 					try{
-						importPlace(wikidata, connect,  r.getString("wikibase"), e, "placeOfActivity", 937, ref, "place", "CLAIM[131]");
+						importPlace(wikidata,  wikibase, e, "placeOfActivity", 937, ref, "place", "CLAIM[131]");
 					}catch(Exception exception){exception.printStackTrace(); continue;}
 					try{
-						importPlace(wikidata, connect,  r.getString("wikibase"), e, "professionOrOccupation", 106, ref, "occupation", "claim[31:(TREE[13516667][][279])]");
+						importPlace(wikidata, wikibase, e, "professionOrOccupation", 106, ref, "occupation", "claim[31:(TREE[13516667][][279])]");
 					}catch(Exception exception){exception.printStackTrace(); continue;}
 					if(e.getChildren("academicDegree").size() > 0){
 						switch(e.getChildren("academicDegree").get(0).getText()){
 						case "Doktor":
 						case "Dr." : 
-							addClaim(wikidata,  r.getString("wikibase"), new Claim(512,4618975), ref);
+							addClaim(wikidata,  wikibase, new Claim(512,849697), ref);
 							break;
 						case "Dr. iur.":
 						case "Dr. jur.":
-							addClaim(wikidata,  r.getString("wikibase"), new Claim(512,959320), ref);
+							addClaim(wikidata,  wikibase, new Claim(512,959320), ref);
 							break;
 						case "Dr. med":
 						case "Dr. med.":
-							addClaim(wikidata,  r.getString("wikibase"), new Claim(512,913404), ref);
+							addClaim(wikidata,  wikibase, new Claim(512,913404), ref);
 							break;
 						case "Prof.":
 						case "Prof":
 						case "Professor":
 						case "Professorin":
-							addClaim(wikidata,  r.getString("wikibase"), new Claim(106,121594), ref);
+							addClaim(wikidata,  wikibase, new Claim(106,121594), ref);
 							break; 
 						case "Prof. Dr.":
 						case "Prof., Dr.":
 						case "Dr., Professor":
 						case "Prof.Dr.":
-							addClaim(wikidata,  r.getString("wikibase"), new Claim(106,121594), ref);
-							addClaim(wikidata,  r.getString("wikibase"), new Claim(512,4618975), ref);
+							addClaim(wikidata,  wikibase, new Claim(106,121594), ref);
+							addClaim(wikidata,  wikibase, new Claim(512,849697), ref);
 							break;
 						case "Graf":
-							addClaim(wikidata,  r.getString("wikibase"), new Claim(97,28989), ref);
+							addClaim(wikidata,  wikibase, new Claim(97,28989), ref);
 							break;
 						default:
 							System.out.println(e.getChildren("academicDegree").get(0).getText());
@@ -169,9 +188,9 @@ public class GNDSetInformationTask extends WikimediaTask {
 					}
 					
 			/*		if(e.getChildren("variantNameEntityForThePerson").size() > 0){
-						ArrayList<String> aliases = ((TranslatedContent<ArrayList<String>>) wikidata.request(new GetAliasesRequest(r.getString("wikibase"), "de"))).get("de");
+						ArrayList<String> aliases = ((TranslatedContent<ArrayList<String>>) wikidata.request(new GetAliasesRequest(wikibase, "de"))).get("de");
 						aliases = (aliases == null ? new ArrayList<String>() : aliases);
-						String title = (String)wikidata.request(new GetLabelRequest("de", r.getString("wikibase")));
+						String title = (String)wikidata.request(new GetLabelRequest("de", wikibase));
 						aliases.add(title);
 						if(title != null){
 							String title2 = title;
@@ -209,17 +228,16 @@ public class GNDSetInformationTask extends WikimediaTask {
 							}
 						}
 						if(newaliases.size() > 0){
-							wikidata.request(new AddAliasesRequest(r.getString("wikibase"), "de", "processed by KasparBot based on GND", newaliases.toArray(new String[newaliases.size()])));
+							wikidata.request(new AddAliasesRequest(wikibase, "de", "processed by KasparBot based on GND", newaliases.toArray(new String[newaliases.size()])));
 							System.out.println("Aliases für "+title+" erstellt: "+newaliases.toString());
 						}
 					} */
-					preparedStatement.setInt(1, r.getInt("ID"));
-					preparedStatement.executeUpdate();
 				}catch(Exception e){
 					e.printStackTrace();
 					continue;
 				}
 			}
+			scanner.close();
 		}catch(Exception e){
 			e.printStackTrace();
 		}

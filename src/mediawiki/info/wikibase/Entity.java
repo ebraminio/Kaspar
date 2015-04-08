@@ -10,6 +10,8 @@ public class Entity {
 	private TranslatedContent<String> descriptions = new TranslatedContent<>();
 	private TranslatedContent<ArrayList<String>> aliases = new TranslatedContent<>();
 	
+	
+	private ArrayList<Sitelink> sitelinks = new ArrayList<>();
 	// Wikilinks
 	
 }

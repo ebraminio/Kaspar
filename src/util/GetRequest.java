@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 
 public class GetRequest {
 
@@ -24,18 +26,16 @@ public class GetRequest {
 
         URLConnection con = url.openConnection();
         con.setRequestProperty("Accept-Charset", "UTF-8");
-        
+
         InputStream is =con.getInputStream();
-        
         
         BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
         
         String line = null;
         StringBuffer buffer = new StringBuffer();
         while ((line = br.readLine()) != null) {
-        	buffer.append(line);
+        	buffer.append(line+"\n");
         }
-        
-        return buffer.toString();
+        return buffer.toString().trim();
 	}
 }

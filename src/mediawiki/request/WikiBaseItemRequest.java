@@ -3,7 +3,6 @@ package mediawiki.request;
 import javat.xml.Document;
 
 import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaException;
 import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;
 import mediawiki.info.Article;

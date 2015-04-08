@@ -6,13 +6,17 @@ import javat.xml.Element;
 import mediawiki.WikimediaConnection;
 import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;
+import mediawiki.info.Article;
 
 
 public class ContentRequest extends WikimediaRequest<String> {
 
-	
 	public ContentRequest(String titles) {
 		setProperty("titles",titles);
+	}
+	
+	public ContentRequest(Article a){
+		setProperty("titles",a.getTitle());
 	}
 
 	@Override

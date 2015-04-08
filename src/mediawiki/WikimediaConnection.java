@@ -1,9 +1,14 @@
 package mediawiki;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import mediawiki.event.RequestEvent;
+import mediawiki.event.RequestListener;
 import mediawiki.request.LoginRequest;
 import mediawiki.request.LogoutRequest;
 import mediawiki.request.ManipulativeRequest;
@@ -24,7 +29,8 @@ public class WikimediaConnection implements Cloneable {
 	private Map<Class<? extends WikimediaRequest<?>>, Integer> statistic = new HashMap<>();
 	
 	private final Object editsynchronizer = new Object();
-	private WikimediaRequest<?> r;
+	
+	private ArrayList<RequestListener> listener = new ArrayList<>();
 	
 	public WikimediaConnection(String apihref){
 		setApihref(apihref);
@@ -53,9 +59,8 @@ public class WikimediaConnection implements Cloneable {
 	}
 
 	public <T> T request(WikimediaRequest<T> r) throws Exception{
-	if(r instanceof LoginRequest)
+		if(r instanceof LoginRequest)
 			setLoginRequest((LoginRequest)r);
-		log(r);
 		T o = null;
 		if(r instanceof ManipulativeRequest){
 			synchronized(editsynchronizer){
@@ -64,6 +69,8 @@ public class WikimediaConnection implements Cloneable {
 		}else{
 			o = r.request(this);
 		}
+		log(r);
+		fireRequestEvent(new RequestEvent(r));
 		return o;
 	}
 	
@@ -111,7 +118,6 @@ public class WikimediaConnection implements Cloneable {
 		statistic.clear();
 	}
 
-	
 	protected LoginRequest getLoginRequest() {
 		return loginrequest;
 	}
@@ -139,5 +145,30 @@ public class WikimediaConnection implements Cloneable {
 	public void resetStatistic(){
 		statistic.clear();
 	}
+
+	public void addRequestListener(RequestListener r){
+		listener.add(r);
+	}
 	
+	public int getStatisticOf(Class<? extends WikimediaRequest<?>> s){
+		return statistic.containsKey(s) ? statistic.get(s) : 0;
+	}
+	
+	protected void fireRequestEvent(RequestEvent r){
+		for(RequestListener rl : listener)
+			rl.requestPerformed(r);
+	}
+
+	public int getEditCount(){
+		int i = 0;
+		for(Entry<Class<? extends WikimediaRequest<?>>, Integer> e : statistic.entrySet()){
+			for(Class c : e.getKey().getInterfaces()){
+				if(c.equals(ManipulativeRequest.class)){
+					i += e.getValue();
+					break;
+				}
+			}
+		}
+		return i;
+	}
 }

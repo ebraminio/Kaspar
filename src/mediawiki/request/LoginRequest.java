@@ -1,5 +1,8 @@
 package mediawiki.request;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.http.entity.mime.content.StringBody;
+
 import mediawiki.WikimediaConnection;
 import mediawiki.WikimediaException;
 import mediawiki.WikimediaPostRequest;
