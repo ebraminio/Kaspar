@@ -1,21 +1,12 @@
 package mediawiki.task;
 
-import static main.GNDLoad.addClaim;
 
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.json.JSONObject;
-
-import main.GNDLoad;
-import mediawiki.ArticleDenier;
 import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaTask;
 import mediawiki.WikimediaUtil;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Claim;
@@ -24,7 +15,6 @@ import mediawiki.info.wikibase.Reference;
 import mediawiki.info.wikibase.Statement;
 import mediawiki.info.wikibase.snaks.ItemSnak;
 import mediawiki.info.wikibase.snaks.StringSnak;
-import mediawiki.request.CategoryMemberRequest;
 import mediawiki.request.ContentRequest;
 import mediawiki.request.EditRequest;
 import mediawiki.request.GetTemplateValuesRequest;
@@ -33,6 +23,8 @@ import mediawiki.request.WikiBaseItemRequest;
 import mediawiki.request.wikibase.CreateClaimRequest;
 import mediawiki.request.wikibase.GetSpecificStatementRequest;
 import mediawiki.request.wikibase.SetReferenceRequest;
+
+import org.json.JSONObject;
 
 public class NormdatenTask2 extends WikipediaWikidataTask {
 
@@ -83,16 +75,19 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 					
 					for(Entry<String, String> e : t.entrySet()){
 						if(ac.getString(e.getKey()) == null){
+							System.err.println(a.getTitle()+"\tunknown template property: "+e.getKey());
 							removable = false;
 						}else{
 							String value = e.getKey().equals("LCCN") ? WikimediaUtil.formatLCCN(e.getValue()) : e.getValue();
 							if(! value.matches(ac.getJSONObject(e.getKey()).getString("pattern"))){
+								System.err.println(a.getTitle()+"\tmalformed value for "+e.getKey());
 								removable = false;
 							}else{
 								List<Statement> l = getConnection().request(new GetSpecificStatementRequest(base, new Property(ac.getJSONObject(e.getKey()).getInt("property"))));
 								if(l.size() == 0){
 									Statement s = getConnection().request(new CreateClaimRequest(base, new Claim(ac.getJSONObject(e.getKey()).getInt("property"), new StringSnak(value))));
 									if(s == null){
+										System.err.println(a.getTitle()+"\tunable to add claim for "+e.getKey());
 										removable = false;
 									}else{
 										getConnection().request(new SetReferenceRequest(s, getReference()));
@@ -104,6 +99,8 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 											flag2 = true;
 										}
 									}
+									if(!flag2)
+										System.err.println(a.getTitle()+"\tdifferent value on wikidata for "+e.getKey());
 									removable = flag2 ? removable : false;
 								}
 							}
