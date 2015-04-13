@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
 
-import org.apache.http.entity.mime.MultipartEntity;
-
 import javat.xml.Document;
 
 
@@ -18,7 +16,6 @@ public class WikimediaPostRequest extends PostRequest {
 		super(c.getApihref());
 		this.con = c;
 		putData("format", "xml");
-		putData("continue","");
 		if(c.isLoggedIn())
 			putData("assert",(c.isBot() ? "bot" : "user"));
 		if(c.isBot()){

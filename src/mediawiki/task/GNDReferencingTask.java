@@ -1,15 +1,10 @@
 package mediawiki.task;
 
-import static main.GNDLoad.addClaim;
-
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import javat.xml.Element;
-
-import org.json.JSONException;
 
 import datasets.in.GND;
 

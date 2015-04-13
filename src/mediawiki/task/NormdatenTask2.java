@@ -4,6 +4,7 @@ package mediawiki.task;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import mediawiki.WikimediaConnection;
@@ -18,6 +19,7 @@ import mediawiki.info.wikibase.snaks.StringSnak;
 import mediawiki.request.ContentRequest;
 import mediawiki.request.EditRequest;
 import mediawiki.request.GetTemplateValuesRequest;
+import mediawiki.request.GetTemplatesValuesRequest;
 import mediawiki.request.TemplateEmbeddedInRequest;
 import mediawiki.request.WikiBaseItemRequest;
 import mediawiki.request.wikibase.CreateClaimRequest;
@@ -55,6 +57,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 			
 			TemplateEmbeddedInRequest p = new TemplateEmbeddedInRequest("Template:Authority control",0);
 			p.setProperty("eidir", "descending");
+			p.setLimit(1000);
 			articles = (List<Article>) getWikipediaConnection().request(p);
 			System.out.println("Alles geladen");
 			
@@ -71,11 +74,12 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 					}
 					
 					
-					HashMap<String,String> t = getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Authority control"));
-					if(t == null){
-						System.err.println(a.getTitle()+"\tunknown alias embedded");
+					List<Map<String,String>> t2 = getWikipediaConnection().request(new GetTemplatesValuesRequest(a.getTitle(), "Authority control"));
+					if(t2.size() != 1){
+						System.err.println(a.getTitle()+"\tunknown alias embedded or more than one template embedded");
 						continue;
 					}
+					Map<String, String> t = t2.get(0);
 					
 					if(t.size() == 0){
 						System.err.println(a.getTitle()+"\talready moved to wikidata");

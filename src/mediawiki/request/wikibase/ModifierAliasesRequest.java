@@ -1,7 +1,5 @@
 package mediawiki.request.wikibase;
 
-import java.nio.file.WatchEvent.Modifier;
-
 import mediawiki.WikimediaConnection;
 import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;

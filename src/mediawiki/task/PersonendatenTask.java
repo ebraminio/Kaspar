@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mediawiki.ArticleDenier;
 import mediawiki.WikidataQuery;
@@ -89,7 +90,7 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 						increaseDone();
 						continue;
 					}
-					HashMap<String,String> t = getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Personendaten"));
+					Map<String,String> t = getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Personendaten"));
 					if(t != null){
 						String desc = t.get("KURZBESCHREIBUNG");
 						if(desc != null){

@@ -1,13 +1,11 @@
 package mediawiki;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javat.xml.Document;
 import javat.xml.Element;
-import mediawiki.info.Article;
 
 abstract public class ContinuingRequest<T> extends WikimediaRequest<List<T>> {
 
@@ -29,6 +27,7 @@ abstract public class ContinuingRequest<T> extends WikimediaRequest<List<T>> {
 		WikimediaPostRequest p = new WikimediaPostRequest(c);
 		p.putData(getProperties());
 		p.putData(getRequiredParameters());
+		p.putData("continue","");
 		Document d = p.requestDocument();
 		System.out.print("Continuing request: ");
 		while(true){

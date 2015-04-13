@@ -1,16 +1,11 @@
 package mediawiki.task;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.json.JSONException;
 
 import datasets.in.GeoNames;
 
 import main.GNDLoad;
-import main.GNDSetInformation;
 import mediawiki.WikidataQuery;
 import mediawiki.WikimediaConnection;
 import mediawiki.WikimediaTask;

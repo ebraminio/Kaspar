@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import main.GNDLoad;
 import mediawiki.ArticleDenier;
@@ -79,7 +80,7 @@ public class NormdatenTask extends WikipediaWikidataTask {
 						continue;
 					}
 					
-					HashMap<String,String> t = getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Authority control"));
+					Map<String,String> t = getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Authority control"));
 					
 					if(t.get("GND") != null && ! t.get("GND").equals("") && t.get("GND").matches("(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]")){
 						GNDLoad.addClaim(getConnection(), base, new Claim(227, new StringSnak(t.get("GND"))), ref, "based on enwiki Authority control");

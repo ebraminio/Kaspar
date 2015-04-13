@@ -1,12 +1,10 @@
 package mediawiki.task;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import main.GNDLoad;
 import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaTask;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
@@ -14,8 +12,6 @@ import mediawiki.info.wikibase.Reference;
 import mediawiki.info.wikibase.WikibaseCoordinate;
 import mediawiki.info.wikibase.snaks.CoordinateSnak;
 import mediawiki.info.wikibase.snaks.ItemSnak;
-import mediawiki.info.wikibase.snaks.StringSnak;
-import mediawiki.request.GetTemplateValuesRequest;
 import mediawiki.request.GetTemplatesValuesRequest;
 import mediawiki.request.TemplateEmbeddedInRequest;
 import mediawiki.request.WikiBaseItemRequest;

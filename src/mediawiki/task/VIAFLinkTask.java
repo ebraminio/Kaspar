@@ -19,7 +19,6 @@ import mediawiki.info.wikibase.Statement;
 import mediawiki.info.wikibase.WikibaseDate;
 import mediawiki.info.wikibase.snaks.DateSnak;
 import mediawiki.info.wikibase.snaks.StringSnak;
-import mediawiki.request.wikibase.GetClaimsRequest;
 import mediawiki.request.wikibase.GetSpecificStatementRequest;
 
 import static main.GNDLoad.addClaim;

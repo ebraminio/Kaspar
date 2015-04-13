@@ -2,6 +2,7 @@ package mediawiki.task;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import main.GNDLoad;
 import mediawiki.WikimediaConnection;
@@ -40,7 +41,7 @@ public class CommonscatTask extends WikipediaWikidataTask {
 						continue;
 					}
 					
-					HashMap<String, String> v = getWikipediaConnection().request(new GetTemplateValuesRequest(ac, "Commonscat"));
+					Map<String, String> v = getWikipediaConnection().request(new GetTemplateValuesRequest(ac, "Commonscat"));
 					String commonscat = v.get("1");
 					commonscat = commonscat == null || commonscat.trim().equals("") ? ac.getTitle() : commonscat;
 					

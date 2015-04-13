@@ -1,7 +1,6 @@
 package mediawiki.task;
 
 import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaRequest;
 import mediawiki.WikimediaTask;
 
 public abstract class WikipediaWikidataTask extends WikimediaTask {

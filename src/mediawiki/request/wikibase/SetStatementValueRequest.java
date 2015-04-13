@@ -6,7 +6,6 @@ import org.json.JSONException;
 import mediawiki.WikimediaConnection;
 import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;
-import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Snak;
 import mediawiki.info.wikibase.Statement;
 import mediawiki.request.ManipulativeRequest;
