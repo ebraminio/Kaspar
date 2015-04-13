@@ -57,7 +57,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 			
 			TemplateEmbeddedInRequest p = new TemplateEmbeddedInRequest("Template:Authority control",0);
 			p.setProperty("eidir", "descending");
-			p.setLimit(1000);
+		//	p.setLimit(1000); for testing
 			articles = (List<Article>) getWikipediaConnection().request(p);
 			System.out.println("Alles geladen");
 			
@@ -133,9 +133,9 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 					
 					if(removable){
 						System.out.println(a.getTitle()+"\ttemplate can be removed");
-				/*		String old = getWikipediaConnection().request(new ContentRequest(a));
+						String old = getWikipediaConnection().request(new ContentRequest(a));
 						String nw  = old.replaceAll("\\{\\{Authority\\ control[\\|A-Za-z0-9\\=\\ \\/\\-]+\\}\\}", "{{Authority control}}");
-						getWikipediaConnection().request(new EditRequest(a, nw, "authority control moved to wikidata")); */
+						getWikipediaConnection().request(new EditRequest(a, nw, "authority control moved to wikidata"));
 					}
 				}catch(Exception e){
 					e.printStackTrace();
