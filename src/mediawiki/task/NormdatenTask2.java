@@ -41,45 +41,59 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 	public void run() {
 		List<Article> articles;
 		try {
-			TemplateEmbeddedInRequest p = new TemplateEmbeddedInRequest("Template:Authority control",0);
-			p.setProperty("eidir", "descending");
-			articles = (List<Article>) getWikipediaConnection().request(p);
-			System.out.println("Alles geladen");
 			
 			InputStream in = NormdatenTask2.class.getResourceAsStream("authoritycontrol.json");
 			StringBuffer b = new StringBuffer();
 			while(in.available() > 0){
 				byte[] buffer = new byte[1024];
 				in.read(buffer);
-				b.append(buffer);
+				b.append(new String(buffer));
 			}
 			in.close();
 			final JSONObject ac = new JSONObject(b.toString());
 			
+			
+			TemplateEmbeddedInRequest p = new TemplateEmbeddedInRequest("Template:Authority control",0);
+			p.setProperty("eidir", "descending");
+			articles = (List<Article>) getWikipediaConnection().request(p);
+			System.out.println("Alles geladen");
+			
+			
+			
 			for(Article a : articles){
+				System.out.println(a.getTitle());
 				try{
-					if(getWikipediaConnection().request(new GetTemplateValuesRequest(a, "bots")) != null){
-						continue;
-					}
-					
 					
 					String base = (String) getWikipediaConnection().request(new WikiBaseItemRequest(a));
 					if(base == null){
+						System.err.println(a.getTitle()+"\tno wikidata item");
 						continue;
 					}
 					
 					
 					HashMap<String,String> t = getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Authority control"));
+					if(t == null){
+						System.err.println(a.getTitle()+"\tunknown alias embedded");
+						continue;
+					}
 					
+					if(t.size() == 0){
+						System.err.println(a.getTitle()+"\talready moved to wikidata");
+						continue;
+					}
+						
 					boolean removable = true;
-					
 					for(Entry<String, String> e : t.entrySet()){
-						if(ac.getString(e.getKey()) == null){
+						if(e.getKey().equalsIgnoreCase("TYP"))
+							continue;
+						if(! ac.has(e.getKey())){
 							System.err.println(a.getTitle()+"\tunknown template property: "+e.getKey());
 							removable = false;
 						}else{
-							String value = e.getKey().equals("LCCN") ? WikimediaUtil.formatLCCN(e.getValue()) : e.getValue();
-							if(! value.matches(ac.getJSONObject(e.getKey()).getString("pattern"))){
+							if(e.getValue().trim().length() == 0)
+								continue;
+							String value = e.getKey().equals("LCCN") && ! e.getValue().matches(ac.getJSONObject(e.getKey()).getString("pattern")) ? WikimediaUtil.formatLCCN(e.getValue()) : e.getValue();
+							if(value == null || ! value.matches(ac.getJSONObject(e.getKey()).getString("pattern"))){
 								System.err.println(a.getTitle()+"\tmalformed value for "+e.getKey());
 								removable = false;
 							}else{
@@ -91,6 +105,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 										removable = false;
 									}else{
 										getConnection().request(new SetReferenceRequest(s, getReference()));
+										System.out.println(a.getTitle()+"\tadded claim for "+e.getKey());
 									}
 								}else{
 									boolean flag2 = false;
@@ -107,10 +122,16 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 						}
 					}
 					
+					if(getWikipediaConnection().request(new GetTemplateValuesRequest(a, "bots")) != null){
+						System.err.println(a.getTitle()+"\tbot-template found");
+						continue;
+					}
+					
 					if(removable){
-						String old = getWikipediaConnection().request(new ContentRequest(a));
+						System.out.println(a.getTitle()+"\ttemplate can be removed");
+				/*		String old = getWikipediaConnection().request(new ContentRequest(a));
 						String nw  = old.replaceAll("\\{\\{Authority\\ control[\\|A-Za-z0-9\\=\\ \\/\\-]+\\}\\}", "{{Authority control}}");
-						getWikipediaConnection().request(new EditRequest(a, nw, "authority control moved to wikidata"));
+						getWikipediaConnection().request(new EditRequest(a, nw, "authority control moved to wikidata")); */
 					}
 				}catch(Exception e){
 					e.printStackTrace();
