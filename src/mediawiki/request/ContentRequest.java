@@ -30,7 +30,9 @@ public class ContentRequest extends WikimediaRequest<String> {
 		p.putData("rvprop", "content");
 		Document d = p.requestDocument();
 		if(d.getRootElement().getChildren("query").get(0).getChildren("pages").get(0).getChildren("page").size() == 0)
-			throw new WikimediaException("cannot find page");
+			return null;
+		if(d.getRootElement().getChildren("query").get(0).getChildren("pages").get(0).getChildren("page").get(0).getChildren("revisions").size() == 0)
+			return null;
 		Element e = d.getRootElement().getChildren("query").get(0).getChildren("pages").get(0).getChildren("page").get(0).getChildren("revisions").get(0).getChildren("rev").get(0);
 		return e.getText();
 	}

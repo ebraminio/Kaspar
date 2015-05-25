@@ -16,6 +16,7 @@ public class EditRequest extends WikimediaRequest<String> implements Manipulativ
 		setProperty("summary", summary);
 	}
 
+	@Deprecated
 	public EditRequest(String string, String text, String summary) {
 		setProperty("title", string);
 		setProperty("text", text);
@@ -28,6 +29,7 @@ public class EditRequest extends WikimediaRequest<String> implements Manipulativ
 	public String request(WikimediaConnection c) throws Exception {
 		String token =  c.request(new TokenRequest());
 		WikimediaPostRequest p = new WikimediaPostRequest(c);
+		p.putData(getProperties());
 		p.putData("action", "edit");
 		p.putData("token", token);
 		Document d = p.requestDocument();

@@ -29,9 +29,7 @@ abstract public class ContinuingRequest<T> extends WikimediaRequest<List<T>> {
 		p.putData(getRequiredParameters());
 		p.putData("continue","");
 		Document d = p.requestDocument();
-		System.out.print("Continuing request: ");
 		while(true){
-			System.out.print(".");
 			Element e = d.getRootElement().getChildren("query").get(0).getChildren(getGroup()).get(0);
 			for(Element a : e.getChildren(getEntry())){
 				r.add(parse(a));
@@ -43,7 +41,6 @@ abstract public class ContinuingRequest<T> extends WikimediaRequest<List<T>> {
 			p.putData(getPrefix()+"continue", d.getRootElement().getChildren("continue").get(0).getAttribute(getPrefix()+"continue").getValue());
 			d = p.requestDocument();
 		}
-		System.out.println();
 		return r;
 	}
 	

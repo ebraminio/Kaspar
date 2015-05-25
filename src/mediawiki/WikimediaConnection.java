@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import mediawiki.event.RequestEvent;
 import mediawiki.event.RequestListener;
+import mediawiki.info.wikibase.Sitelink;
 import mediawiki.request.LoginRequest;
 import mediawiki.request.LogoutRequest;
 import mediawiki.request.ManipulativeRequest;
@@ -39,6 +40,10 @@ public class WikimediaConnection implements Cloneable {
 		this("https://"+language+"."+wikiname+"/w/api.php");
 		setWikiname(wikiname);
 		setLanguage(language);
+	}
+	
+	public WikimediaConnection(Sitelink s){
+		this(s.getURLPrefix(),s.getURLSuffix());
 	}
 
 	public String getWikiname() {

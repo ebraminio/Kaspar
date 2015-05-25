@@ -50,6 +50,6 @@ public class Sitelink {
 			return "www";
 		if(getProject().equals("commonswiki"))
 			return "commons";
-		return getLanguage();
+		return getLanguage().replace('_', '-');
 	}
 }

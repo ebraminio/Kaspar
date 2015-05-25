@@ -53,4 +53,13 @@ public class Article {
 		return a.getPageid() == this.pageid || a.getTitle().equals(this.title);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		if(!(obj instanceof Article))
+			return false;
+		Article a = (Article) obj;
+		return pageid == a.pageid && a.namespace == namespace && a.title.equals(title);
+	}
 }

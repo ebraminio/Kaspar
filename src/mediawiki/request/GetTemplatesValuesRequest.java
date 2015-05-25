@@ -17,6 +17,7 @@ public class GetTemplatesValuesRequest extends WikimediaRequest<List<Map<String,
 	private String title;
 	private String template;
 	
+	private boolean uppercasemode = false;
 	
 	public GetTemplatesValuesRequest(Article article, String template){
 		this(article.getTitle(), template);
@@ -45,13 +46,22 @@ public class GetTemplatesValuesRequest extends WikimediaRequest<List<Map<String,
 						key = i+"";
 						i++;
 					}
- 					r.put(key, e2.getChildren("value").get(0).getText().trim());
+					key = uppercasemode ? key.toUpperCase() : key;
+					r.put(key, e2.getChildren("value").get(0).getText().trim());
 				}
 				res.add(r);
 			}
 		}
 		
 		return res;
+	}
+
+	public boolean isUppercaseMode() {
+		return uppercasemode;
+	}
+
+	public void setUppercaseMode(boolean uppercasemode) {
+		this.uppercasemode = uppercasemode;
 	}
 
 }

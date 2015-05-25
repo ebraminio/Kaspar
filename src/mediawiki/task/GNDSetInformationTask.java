@@ -8,11 +8,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 import javat.xml.Element;
 import datasets.in.GND;
 import datasets.in.MARC;
+import mediawiki.WikidataQuery;
 import mediawiki.WikimediaConnection;
 import mediawiki.WikimediaTask;
 import mediawiki.info.wikibase.Claim;
@@ -30,8 +32,6 @@ import static main.GNDSetInformation.importPlace;
 
 public class GNDSetInformationTask extends WikimediaTask {
 
-	final int version = 9; 
-	
 	public GNDSetInformationTask(WikimediaConnection con) {
 		super(con);
 	}
@@ -44,12 +44,14 @@ public class GNDSetInformationTask extends WikimediaTask {
 			
 			SimpleDateFormat log = new SimpleDateFormat("HH:mm:ss");
 			  
+			WikidataQuery wdq = new WikidataQuery("CLAIM[31:5] AND CLAIM[227]");
 			
-			Scanner scanner = new Scanner(new File("/home/kaspar/gnd_ds.csv"));
-			while(scanner.hasNextLine()){
+			List<Integer> l = wdq.request();
+			System.out.println(l.size()+" Einträge geladen");
+			for(Integer b : l){
 				if(isStopped())
 					return;
-				String wikibase = scanner.nextLine().trim();
+				String wikibase = "Q"+b;
 				try{
 					if(getConnection().request(new GetSpecificStatementRequest(wikibase, new Claim(31, new ItemSnak(5)))).size() == 0){
 						System.err.println(wikibase+" isn't a human!");
@@ -227,7 +229,6 @@ public class GNDSetInformationTask extends WikimediaTask {
 					continue;
 				}
 			}
-			scanner.close();
 		}catch(Exception e){
 			e.printStackTrace();
 		}

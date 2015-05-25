@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import mediawiki.ArticleDenier;
+import mediawiki.ContinuingRequest;
 import mediawiki.WikidataQuery;
 import mediawiki.WikimediaConnection;
 import mediawiki.info.Article;
@@ -36,16 +37,14 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 	private Claim[] claims;
 	
 	private Article startAt;
-	private Connection connect;
 	
 	private Reference ref;
 	private ArticleDenier denier;
 	
-	public PersonendatenTask(WikimediaConnection con, WikimediaConnection wikipedia, Connection connect, String kat, Claim...claims) {
+	public PersonendatenTask(WikimediaConnection con, WikimediaConnection wikipedia, String kat, Claim...claims) {
 		super(con,wikipedia);
 		this.kat = kat;
 		this.claims = claims;
-		this.connect = connect;
 		
 		ref = new Reference(new Property(143), new ItemSnak(48183));
 	}
@@ -56,11 +55,11 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 		
 		try {
 			
-			PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO gnddata (gnd, wikibase) VALUES (?,?)");
-			PreparedStatement preparedStatement2 = connect.prepareStatement("SELECT * FROM gnddata WHERE gnd = ? AND wikibase = ?");
 			SimpleDateFormat log = new SimpleDateFormat("HH:mm:ss");
 			
-			List<Article> articles = (List<Article>) getWikipediaConnection().request(new CategoryMemberRequest(kat,0));
+			CategoryMemberRequest cmr = new CategoryMemberRequest(kat,0);
+			cmr.setProperty("cmdir", "newer");
+			List<Article> articles = getWikipediaConnection().request(cmr);
 			setTogo(articles.size());
 			recordETA();
 			
@@ -119,15 +118,7 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 					HashMap<String,String> n = (HashMap<String, String>) getWikipediaConnection().request(new GetTemplateValuesRequest(a.getTitle(), "Normdaten"));
 					if(n != null){
 						if(n.get("GND") != null && ! n.get("GND").equals("")){
-							if(addClaim(getConnection(), base, new Claim(new Property(227),new StringSnak(n.get("GND"))), ref, "processed by Kaspar using authority data on dewiki") != null){
-								preparedStatement2.setString(1, n.get("GND"));
-								preparedStatement2.setString(2, base);
-								if(! preparedStatement2.executeQuery().next()){
-									preparedStatement.setString(1, n.get("GND"));
-									preparedStatement.setString(2, base);
-									preparedStatement.executeUpdate();
-								}
-							}
+							addClaim(getConnection(), base, new Claim(new Property(227),new StringSnak(n.get("GND"))), ref, "processed by Kaspar using authority data on dewiki");
 						}
 					//	if(n.get("LCCN") != null && ! n.get("LCCN").equals("")){
 					//		addClaim(getConnection(), base, new Claim(new Property(244),new StringSnak(n.get("LCCN"))), ref, "processed by Kaspar using authority data on dewiki");

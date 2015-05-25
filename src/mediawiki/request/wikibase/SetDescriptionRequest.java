@@ -22,7 +22,7 @@ public class SetDescriptionRequest extends WikimediaRequest implements Manipulat
 	
 	@Override
 	public Object request(WikimediaConnection c) throws Exception {
-		String token = (String) c.request(new TokenRequest());
+		String token = c.request(new TokenRequest());
 		WikimediaPostRequest p = new WikimediaPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "wbsetdescription");

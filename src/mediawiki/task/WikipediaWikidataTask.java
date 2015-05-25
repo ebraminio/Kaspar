@@ -16,4 +16,8 @@ public abstract class WikipediaWikidataTask extends WikimediaTask {
 		return wikipedia;
 	}
 
+	public WikimediaConnection getWikidataConnection(){
+		return getConnection();
+	}
+
 }
