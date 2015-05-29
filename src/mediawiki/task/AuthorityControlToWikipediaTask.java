@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 import mediawiki.WikimediaConnection;
+import mediawiki.info.Project;
 import mediawiki.info.wikibase.Sitelink;
 import mediawiki.request.ContentRequest;
 import mediawiki.request.EditRequest;
@@ -29,7 +30,7 @@ public class AuthorityControlToWikipediaTask extends WikipediaWikidataTask {
 			while(s.hasNextLine()){
 				try {
 					String base = s.nextLine();
-					Sitelink sl = getWikidataConnection().request(new GetSitelinkRequest(base,"enwiki"));
+					Sitelink sl = getWikidataConnection().request(new GetSitelinkRequest(base,new Project("enwiki")));
 					if(getWikipediaConnection().request(new GetTemplatesValuesRequest(sl.getTitle(),"Authority control")).size() > 0)
 						continue;
 					if(getWikipediaConnection().request(new GetTemplatesValuesRequest(sl.getTitle(), "bots")).size() !=  0 ){

@@ -1,55 +1,49 @@
 package mediawiki.info.wikibase;
 
+import mediawiki.info.Project;
+
 public class Sitelink {
 
-	private String site;
+	private Project site;
 	private String title;
 	
+	@Deprecated
 	public Sitelink(String site, String title){
 		setSite(site);
 		setTitle(title);
 	}
 	
+	public Sitelink(Project site, String title){
+		this.site = site;
+		setTitle(title);
+	}
+	
 	public String getSite() {
-		return site;
+		return site.getSite();
 	}
 	public String getTitle() {
 		return title;
 	}
 	public void setSite(String site) {
-		this.site = site;
+		this.site.setSite(site);
 	}
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
 	public String getProject(){
-		for(String s : new String[]{"wikibooks","wikiquote","wikisource","wikinews","wikivoyage","wikidatawiki","commonswiki","wiki"}){
-			if(site.endsWith(s))
-				return s;
-		}
-		return null;
+		return site.getProject();
 	}
 	
 	public String getLanguage(){
-		return site.replaceAll(getProject(), "");
+		return site.getLanguage();
 	}
 	
 	public String getURLSuffix(){
-		if(getProject().equals("wikidatawiki"))
-			return "wikidata.org";
-		if(getProject().equals("commonswiki"))
-			return "wikimedia.org";
-		if(getProject().equals("wiki"))
-			return "wikipedia.org";
-		return getProject()+".org";
+		return site.getURLSuffix();
 	}
 	
 	public String getURLPrefix(){
-		if(getProject().equals("wikidatawiki"))
-			return "www";
-		if(getProject().equals("commonswiki"))
-			return "commons";
-		return getLanguage().replace('_', '-');
+		return site.getURLPrefix();
 	}
 }

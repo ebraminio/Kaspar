@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import mediawiki.event.RequestEvent;
 import mediawiki.event.RequestListener;
+import mediawiki.info.Project;
 import mediawiki.info.wikibase.Sitelink;
 import mediawiki.request.LoginRequest;
 import mediawiki.request.LogoutRequest;
@@ -23,14 +24,14 @@ public class WikimediaConnection implements Cloneable {
 	private LoginRequest loginrequest = null;
 	private boolean login = false;
 	private boolean bot = false;
+	private boolean teststate = false;
 	
 	private HashMap<String, String> cookies = new HashMap<>();
-	
 	private Map<Class<? extends WikimediaRequest<?>>, Integer> statistic = new HashMap<>();
-	
 	private final Object editsynchronizer = new Object();
 	
 	private ArrayList<RequestListener> listener = new ArrayList<>();
+	private GlobalWikimediaConnection globalcon = null;
 	
 	public WikimediaConnection(String apihref){
 		setApihref(apihref);
@@ -42,7 +43,7 @@ public class WikimediaConnection implements Cloneable {
 		setLanguage(language);
 	}
 	
-	public WikimediaConnection(Sitelink s){
+	public WikimediaConnection(Project s){
 		this(s.getURLPrefix(),s.getURLSuffix());
 	}
 
@@ -67,8 +68,13 @@ public class WikimediaConnection implements Cloneable {
 			setLoginRequest((LoginRequest)r);
 		T o = null;
 		if(r instanceof ManipulativeRequest){
-			synchronized(editsynchronizer){
-				o = r.request(this);
+			if(isTestState()){
+				System.out.println("test state edit: "+r.toString());
+				return null;
+			}else{
+				synchronized(editsynchronizer){
+					o = r.request(this);
+				}
 			}
 		}else{
 			o = r.request(this);
@@ -88,10 +94,14 @@ public class WikimediaConnection implements Cloneable {
 	
 	public void putCookie(String k, String v) {
 		cookies.put(k, v);
+		if(isGloballyConnected())
+			getGlobalConnection().putGlobalCookie(k, v);
 	}
 	
 	public void putCookies(Map<String, String> m){
 		cookies.putAll(m);
+		if(isGloballyConnected())
+			getGlobalConnection().putGlobalCookies(m);
 	}
 	
 	public Map<String, String> getCookies(){
@@ -132,6 +142,8 @@ public class WikimediaConnection implements Cloneable {
 	
 	public void setLoggedIn(boolean l){
 		login = l;
+		if(isGloballyConnected())
+			getGlobalConnection().setLoggedIn(l);
 	}
 
 	public void setLoginRequest(LoginRequest loginrequest) {
@@ -175,4 +187,25 @@ public class WikimediaConnection implements Cloneable {
 		}
 		return i;
 	}
+
+	public void setTestState(boolean test){
+		teststate = test;
+	}
+	
+	public boolean isTestState(){
+		return teststate;
+	}
+
+	
+	public GlobalWikimediaConnection getGlobalConnection() {
+		return globalcon;
+	}
+
+	public void setGlobalConnection(GlobalWikimediaConnection globalcon) {
+		this.globalcon = globalcon;
+	}
+	public boolean isGloballyConnected(){
+		return getGlobalConnection() != null;
+	}
+	
 }

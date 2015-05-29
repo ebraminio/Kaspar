@@ -15,6 +15,10 @@
   "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
   "property": "227"
  },
+ "GKD": {
+  "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
+  "property": "227"
+ },
  "DNB": {
   "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
   "property": "227"
@@ -74,5 +78,73 @@
  "BNF": {
   "pattern": "\\d{8}[0-9bcdfghjkmnpqrstvwxz]",
   "property": "268"
+ },
+ "MGP": {
+  "pattern": "\\d{1,6}",
+  "property": "549"
+ },
+ "BNE": {
+  "pattern": "XX\\d{5,7}",
+  "property": "950"
+ },
+ "CANTIC": {
+  "pattern": "a\\d{7}[0-9x]",
+  "property": "1273"
+ },
+ "NKC": {
+  "pattern": "[a-z]{2,4}[0-9]{2,14}",
+  "property": "691"
+ },
+ "SBN": {
+  "pattern": "IT\\\\ICCU\\\\(\\d{10}|\\D\\D[\\D\\d]\\D\\\\\\d{6})",
+  "property": "396"
+ },
+ "PTBNP": {
+  "pattern": "[1-9][0-9]*",
+  "property": "1005"
+ },
+ "NTA": {
+  "pattern": "[0-9]{8}[0-9X]",
+  "property": "1006"
+ },
+ "NUKAT": {
+  "pattern": "n(9[3-9]|0[0-2]|200[2-9]|201[0-4])\\d{6}",
+  "property": "1207"
+ },
+ "BAV": {
+  "pattern": "ADV\\d{8}",
+  "property": "1017"
+ },
+ "BNC": {
+  "pattern": "\\d{9}",
+  "property": "1890"
+ },
+ "NLI": {
+  "pattern": "\\d{9}",
+  "property": "949"
+ },
+ "CINII": {
+  "pattern": "DA\\d{7}[\\dX]",
+  "property": "271"
+ },
+ "NLP": {
+  "pattern": "A[0-9]{7}[0-9X]",
+  "property": "1695"
+ },
+ "FIDE": {
+  "pattern": "\\d{6,8}",
+  "property": "1440"
+ },
+ "SIKART": {
+  "pattern": "\\d{7,9}",
+  "property": "781"
+ },
+ "TLS": {
+  "pattern": "[A-ZÅÄÖÜÉ][a-zåäâáàöóüéèëêşçA-ZÅÄÖÜÉ0-9 ',\\.\\-–()\\*/]*",
+  "property": "1362"
+ },
+ "LIR": {
+  "pattern": ".*",
+  "property": "886"
  }
 }

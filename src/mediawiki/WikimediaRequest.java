@@ -34,4 +34,5 @@ abstract public class WikimediaRequest<T extends Object> {
 	public Map<String, AbstractContentBody> getProperties(){
 		return data;
 	}
+
 }

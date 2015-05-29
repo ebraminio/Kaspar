@@ -63,6 +63,11 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 			in.close();
 			final JSONObject ac = new JSONObject(b.toString());
 			
+			if(config.getRequest() instanceof CategoryMemberRequest){
+				config.getRequest().setProperty("cmdir", "newer");
+			}else if(config.getRequest() instanceof TemplateEmbeddedInRequest){
+				config.getRequest().setProperty("eidir", "descending");
+			}
 			
 			articles = getWikipediaConnection().request(config.getRequest()); 
 			System.out.println("Alles geladen");
@@ -106,11 +111,15 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 					boolean removable = true;
 					for(Entry<String, String> e : t.entrySet()){
 						if(		e.getKey().equalsIgnoreCase("TYP") ||
+								e.getKey().equalsIgnoreCase("TYPE") ||
 								e.getKey().equalsIgnoreCase("GNDCheck") ||
 								e.getKey().equalsIgnoreCase("GNDfehlt") ||
 								e.getKey().equalsIgnoreCase("GNDName") ||
 								e.getKey().equalsIgnoreCase("TIMESTAMP") ||
-								e.getKey().equalsIgnoreCase("TSURL")
+								e.getKey().equalsIgnoreCase("TSURL") ||
+								e.getKey().equalsIgnoreCase("NOTES") ||
+								e.getKey().equalsIgnoreCase("REMARK") ||
+								e.getKey().equalsIgnoreCase("BARE")
 								)
 							continue;
 						if(e.getKey().equalsIgnoreCase("1") && e.getValue().trim().length() == 0)
@@ -119,8 +128,13 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							System.out.println("** unknown template property: "+e.getKey());
 							removable = false;
 						}else{
-							if(e.getValue().trim().length() == 0)
+							if(e.getValue().trim().length() == 0){
+								if(config.isKeepEmpty()){
+									removable = false;
+									System.out.println("** keep-empty-mode. empty template property: "+e.getKey());
+								}
 								continue;
+							}
 							String value = e.getKey().equals("LCCN") && ! e.getValue().matches(ac.getJSONObject(e.getKey()).getString("pattern")) ? WikimediaUtil.formatLCCN(e.getValue()) : e.getValue();
 							if(e.getKey().equalsIgnoreCase("ISNI")){
 								value = value.replaceAll("(\\d{4})(\\d{4})(\\d{4})(\\d{3}[\\dX])", "$1 $2 $3 $4");
@@ -128,6 +142,9 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							}
 							if(e.getKey().equalsIgnoreCase("BNF")){
 								value = value.replaceAll("cb(\\d{8}[0-9bcdfghjkmnpqrstvwxz])", "$1");
+							}
+							if(e.getKey().equalsIgnoreCase("NLA")){
+								value = value.replaceAll("0000([1-9][0-9]{0,11})", "$1");
 							}
 							if(value == null || ! value.matches(ac.getJSONObject(e.getKey()).getString("pattern"))){
 								System.out.println("** malformed value for "+e.getKey()+": "+value);
@@ -169,22 +186,26 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 					
 					if(removable){
 						String old = getWikipediaConnection().request(new ContentRequest(a));
-						String regex = "(?iu)\\{\\{(";
+						String regex = "(?iu)\\{\\{\\ {0,1}(";
 						for(String template : config.getTemplates()){
 							regex += "("+Pattern.quote(template)+")|"; // 
 						}
 						regex = regex.substring(0, regex.length()-1);
-						regex+= ")[\\|A-Za-z0-9\\=\\_\\s\\ \\/\\-]+\\}\\}";
+						regex+= ")[\\|\\w0-9\\=\\_\\s\\ \\/\\\\\\-]+\\}\\}";
 						
 						String nw  = old.replaceAll(regex, "{{"+config.getTemplate()+"}}");
 						if(nw.equals(old)){
 							System.out.println("** unknown error: regex doesn't match");
+							removable = false;
 						}
 						if(nw.length() == 0){
 							System.out.println("** unknown error: error while calculating error");
+							removable = false;
 						}
-						getWikipediaConnection().request(new EditRequest(a, nw, "authority control moved to wikidata"));
-						System.out.println("** template replaced");
+						if(removable){
+							getWikipediaConnection().request(new EditRequest(a, nw, "authority control moved to wikidata"));
+							System.out.println("** template replaced");
+						}
 					} 
 				}catch(Exception e){
 					e.printStackTrace();

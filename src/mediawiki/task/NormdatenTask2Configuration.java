@@ -27,6 +27,37 @@ public class NormdatenTask2Configuration {
 			new Reference(new Property(143), new ItemSnak(842341)),
 			"Нормативна контрола","Authority control","Normdaten"
 			);
+	public static final NormdatenTask2Configuration DAWIKI = new NormdatenTask2Configuration(
+			new CategoryMemberRequest("Kategori:Sider med autoritetsdata med parametre",0),
+			new Reference(new Property(143), new ItemSnak(181163)),
+			"Autoritetsdata","Authority control","Normdaten"
+			);
+	public static final NormdatenTask2Configuration CAWIKI = new NormdatenTask2Configuration(
+			new CategoryMemberRequest("Categoria:Pàgines utilitzant control d'autoritats amb paràmetres",0),
+			new Reference(new Property(143), new ItemSnak(199693)),
+			true,
+			"autoritat","Authority control","Normdaten"
+			);
+	public static final NormdatenTask2Configuration ITWIKI = new NormdatenTask2Configuration(
+			new CategoryMemberRequest("Categoria:Voci con template Controllo di autorità con parametri",0),
+			new Reference(new Property(143), new ItemSnak(11920)),
+			"Controllo di autorità","Authority control","Normdaten"
+			);
+	public static final NormdatenTask2Configuration PLWIKI = new NormdatenTask2Configuration(
+			new CategoryMemberRequest("Kategoria:Kontrola autorytatywna z parametrami",0),
+			new Reference(new Property(143), new ItemSnak(1551807)),
+			"Kontrola autorytatywna","Authority control","Normdaten"
+			);	
+	public static final NormdatenTask2Configuration JAWIKI = new NormdatenTask2Configuration(
+			new CategoryMemberRequest("Category:典拠管理をパラメータで指定しているページ",0),
+			new Reference(new Property(143), new ItemSnak(177837)),
+			"Normdaten","Authority control"
+			);
+	public static final NormdatenTask2Configuration HUWIKI = new NormdatenTask2Configuration(
+			new CategoryMemberRequest("Kategória:Tesztelés alatt álló sablon",0),
+			new Reference(new Property(143), new ItemSnak(53464)),
+			"Nemzetközi katalógusok","Normdaten","Authority control"
+			);
 	
 	
 	public NormdatenTask2Configuration(WikimediaRequest<List<Article>> r, Reference ref, String...t) {
@@ -35,9 +66,17 @@ public class NormdatenTask2Configuration {
 		this.reference = ref;
 	}
 	
+	public NormdatenTask2Configuration(WikimediaRequest<List<Article>> r, Reference ref, boolean kE, String...t) {
+		this.request = r;
+		this.template = t;
+		this.reference = ref;
+		this.keepEmpty = kE;
+	}
+	
 	private WikimediaRequest<List<Article>> request;
 	private String[] template;
 	private Reference reference;
+	private boolean keepEmpty = false;
 	
 	
 	public WikimediaRequest<List<Article>> getRequest() {
@@ -66,6 +105,14 @@ public class NormdatenTask2Configuration {
 
 	public void setReference(Reference reference) {
 		this.reference = reference;
+	}
+
+	public boolean isKeepEmpty() {
+		return keepEmpty;
+	}
+
+	public void setKeepEmpty(boolean keepEmpty) {
+		this.keepEmpty = keepEmpty;
 	}
 
 }

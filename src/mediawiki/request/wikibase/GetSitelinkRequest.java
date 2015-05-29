@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import mediawiki.WikimediaConnection;
 import mediawiki.WikimediaRequest;
+import mediawiki.info.Project;
 import mediawiki.info.wikibase.Sitelink;
 
 public class GetSitelinkRequest extends WikimediaRequest<Sitelink> {
@@ -14,9 +15,9 @@ public class GetSitelinkRequest extends WikimediaRequest<Sitelink> {
 		r = new GetSitelinksRequest(base);
 	}
 	
-	public GetSitelinkRequest(String base, String site) {
+	public GetSitelinkRequest(String base, Project site) {
 		r = new GetSitelinksRequest(base);
-		r.setProperty("sitefilter", site);
+		r.setProperty("sitefilter", site.toString());
 	}
 	
 	@Override
