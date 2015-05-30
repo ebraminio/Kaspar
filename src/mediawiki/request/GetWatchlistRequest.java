@@ -9,7 +9,7 @@ import mediawiki.ContinuingRequest;
 public class GetWatchlistRequest extends ContinuingRequest<String> {
 
 	public GetWatchlistRequest(){
-		super("watchlistraw", "wr", "wr");
+		super("watchlist", "item", "wl");
 	}
 	
 
@@ -23,7 +23,7 @@ public class GetWatchlistRequest extends ContinuingRequest<String> {
 	protected Map<? extends String, ? extends String> getRequiredParameters() {
 		HashMap<String, String> p = new HashMap<>();
 		p.put("action", "query");
-		p.put("list", "watchlistraw");
+		p.put("list", "watchlist");
 		return p;
 	}
 

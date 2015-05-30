@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import mediawiki.event.RequestEvent;
 import mediawiki.event.RequestListener;
 import mediawiki.info.Project;
-import mediawiki.info.wikibase.Sitelink;
 import mediawiki.request.LoginRequest;
 import mediawiki.request.LogoutRequest;
 import mediawiki.request.ManipulativeRequest;

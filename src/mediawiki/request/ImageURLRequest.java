@@ -1,14 +1,7 @@
 package mediawiki.request;
 
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
 import javat.xml.Document;
-import javat.xml.Element;
-
-import mediawiki.ContinuingRequest;
 import mediawiki.WikimediaConnection;
 import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;

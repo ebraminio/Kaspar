@@ -10,32 +10,23 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaException;
-import mediawiki.WikimediaRequest;
 import mediawiki.WikimediaUtil;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
-import mediawiki.info.wikibase.Reference;
 import mediawiki.info.wikibase.Statement;
-import mediawiki.info.wikibase.snaks.ItemSnak;
 import mediawiki.info.wikibase.snaks.StringSnak;
 import mediawiki.request.CategoryMemberRequest;
 import mediawiki.request.ContentRequest;
 import mediawiki.request.EditRequest;
-import mediawiki.request.GetTemplateValuesRequest;
 import mediawiki.request.GetTemplatesValuesRequest;
 import mediawiki.request.TemplateEmbeddedInRequest;
-import mediawiki.request.UserDailyContributionsRequest;
 import mediawiki.request.WikiBaseItemRequest;
 import mediawiki.request.wikibase.CreateClaimRequest;
 import mediawiki.request.wikibase.GetSpecificStatementRequest;
 import mediawiki.request.wikibase.SetReferenceRequest;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.json.JSONObject;
-
-import util.Util;
 
 public class NormdatenTask2 extends WikipediaWikidataTask {
 
@@ -109,6 +100,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 					}
 						
 					boolean removable = true;
+					HashMap<String,String> newParameters = new HashMap<>();
 					for(Entry<String, String> e : t.entrySet()){
 						if(		e.getKey().equalsIgnoreCase("TYP") ||
 								e.getKey().equalsIgnoreCase("TYPE") ||
@@ -124,12 +116,14 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							continue;
 						if(e.getKey().equalsIgnoreCase("1") && e.getValue().trim().length() == 0)
 							continue;
-						if(! ac.has(e.getKey())){
+						if(! ac.has(e.getKey()) && (e.getValue().trim().length() > 0 || (config.isKeepEmpty() && e.getValue().trim().length() == 0) ) ){
 							System.out.println("** unknown template property: "+e.getKey());
+							newParameters.put(e.getKey(),e.getValue());
 							removable = false;
 						}else{
 							if(e.getValue().trim().length() == 0){
 								if(config.isKeepEmpty()){
+									newParameters.put(e.getKey(),"");
 									removable = false;
 									System.out.println("** keep-empty-mode. empty template property: "+e.getKey());
 								}
@@ -148,6 +142,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							}
 							if(value == null || ! value.matches(ac.getJSONObject(e.getKey()).getString("pattern"))){
 								System.out.println("** malformed value for "+e.getKey()+": "+value);
+								newParameters.put(e.getKey(),e.getValue());
 								removable = false;
 							}else{
 								List<Statement> l = getConnection().request(new GetSpecificStatementRequest(base, new Property(ac.getJSONObject(e.getKey()).getInt("property"))));
@@ -156,6 +151,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 									if(s == null){
 										System.out.println("** unable to add claim for "+e.getKey());
 										removable = false;
+										newParameters.put(e.getKey(),e.getValue());
 									}else{
 										getConnection().request(new SetReferenceRequest(s, config.getReference()));
 										System.out.println("** added claim for "+e.getKey());
@@ -170,9 +166,10 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 										}
 									}
 									ss = ss.substring(1);
-									if(!flag2)
+									if(!flag2){
 										System.out.println("** different value on wikidata for "+e.getKey()+": "+value+"!="+ss);
-									
+										newParameters.put(e.getKey(),e.getValue());
+									}
 									removable = flag2 ? removable : false;
 								}
 							}
@@ -184,6 +181,13 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 						continue;
 					}
 					
+					removable = (newParameters.size() > 0 && newParameters.size() < t.size()) || removable;
+					
+					if(newParameters.size() >= t.size()){
+						System.out.println("** no effective reduction possible");
+						removable = false;
+					}
+					
 					if(removable){
 						String old = getWikipediaConnection().request(new ContentRequest(a));
 						String regex = "(?iu)\\{\\{\\ {0,1}(";
@@ -191,9 +195,9 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							regex += "("+Pattern.quote(template)+")|"; // 
 						}
 						regex = regex.substring(0, regex.length()-1);
-						regex+= ")[\\|\\w0-9\\=\\_\\s\\ \\/\\\\\\-]+\\}\\}";
+						regex+= ")[\\|\\p{L}\\d\\[\\]\\=\\_\\s\\ \\/\\\\\\-]+\\}\\}";
 						
-						String nw  = old.replaceAll(regex, "{{"+config.getTemplate()+"}}");
+						String nw  = old.replaceAll(regex, "{{"+config.getTemplate()+(newParameters.size() > 0 ? "|"+convertToTemplateProperties(newParameters) : "")+"}}");
 						if(nw.equals(old)){
 							System.out.println("** unknown error: regex doesn't match");
 							removable = false;
@@ -218,5 +222,14 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 		}
 	}
 
+	private static String convertToTemplateProperties(Map<String,String> m){
+		String result = "";
+		for(Entry<String, String> e : m.entrySet()){
+			result +="|"+e.getKey()+"="+e.getValue()+" ";
+		}
+		if(result.length() > 0)
+			result = result.substring(1).trim();
+		return result;
+	}
 
 }

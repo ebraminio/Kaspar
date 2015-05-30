@@ -1,9 +1,5 @@
 package mediawiki.task;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import mediawiki.ArticleDenier;
-import mediawiki.ContinuingRequest;
-import mediawiki.WikidataQuery;
 import mediawiki.WikimediaConnection;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Claim;

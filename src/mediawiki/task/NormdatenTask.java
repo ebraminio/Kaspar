@@ -2,17 +2,13 @@ package mediawiki.task;
 
 import static main.GNDLoad.addClaim;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import main.GNDLoad;
 import mediawiki.ArticleDenier;
 import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaTask;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
@@ -20,7 +16,6 @@ import mediawiki.info.wikibase.Reference;
 import mediawiki.info.wikibase.Statement;
 import mediawiki.info.wikibase.snaks.ItemSnak;
 import mediawiki.info.wikibase.snaks.StringSnak;
-import mediawiki.request.CategoryMemberRequest;
 import mediawiki.request.GetTemplateValuesRequest;
 import mediawiki.request.TemplateEmbeddedInRequest;
 import mediawiki.request.WikiBaseItemRequest;

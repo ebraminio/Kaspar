@@ -4,7 +4,6 @@ import javat.xml.Document;
 import javat.xml.Element;
 
 import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaException;
 import mediawiki.WikimediaPostRequest;
 import mediawiki.WikimediaRequest;
 import mediawiki.info.Article;

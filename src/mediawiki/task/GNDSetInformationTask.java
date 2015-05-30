@@ -3,14 +3,11 @@ package mediawiki.task;
 import static main.GNDLoad.addClaim;
 import static main.GNDLoad.importDate;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
-
 import javat.xml.Element;
 import datasets.in.GND;
 import datasets.in.MARC;
