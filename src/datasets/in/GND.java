@@ -1,6 +1,7 @@
 package datasets.in;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
@@ -28,4 +29,12 @@ public class GND {
 		return new MARC(d.getRootElement());
 	}
 	
+	public static boolean hasEntry(String gnd) throws IOException, XMLStreamException, SAXException{
+		try{
+			getGNDEntry(gnd);
+		}catch(FileNotFoundException e){
+			return false;
+		}
+		return true;
+	}
 }

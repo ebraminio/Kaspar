@@ -35,7 +35,6 @@ public class NormdatenTask2Configuration {
 	public static final NormdatenTask2Configuration CAWIKI = new NormdatenTask2Configuration(
 			new CategoryMemberRequest("Categoria:Pàgines utilitzant control d'autoritats amb paràmetres",0),
 			new Reference(new Property(143), new ItemSnak(199693)),
-			true,
 			"autoritat","Authority control","Normdaten"
 			);
 	public static final NormdatenTask2Configuration ITWIKI = new NormdatenTask2Configuration(
@@ -58,6 +57,22 @@ public class NormdatenTask2Configuration {
 			new Reference(new Property(143), new ItemSnak(53464)),
 			"Nemzetközi katalógusok","Normdaten","Authority control"
 			);
+	public static final NormdatenTask2Configuration KOWIKI = new NormdatenTask2Configuration(
+			new CategoryMemberRequest("분류:매개 변수를 가진 전거 통제 틀을 사용하는 문서",0),
+			new Reference(new Property(143), new ItemSnak(17985)),
+			"Authority control","전거 정보","전거 통제","전거 제어","Normdaten"
+			);
+	
+	public static final NormdatenTask2Configuration CAWIKI_TAXON = new NormdatenTask2Configuration(
+			new TemplateEmbeddedInRequest("Plantilla:Bases de dades taxonòmiques", 0),
+			new Reference(new Property(143), new ItemSnak(199693)),
+			"Bases de dades taxonòmiques","BDT"
+			);
+	
+	static {
+		CAWIKI_TAXON.setLowerCaseMode(true);
+		CAWIKI.setKeepEmpty(true);
+	}
 	
 	
 	public NormdatenTask2Configuration(WikimediaRequest<List<Article>> r, Reference ref, String...t) {
@@ -66,17 +81,11 @@ public class NormdatenTask2Configuration {
 		this.reference = ref;
 	}
 	
-	public NormdatenTask2Configuration(WikimediaRequest<List<Article>> r, Reference ref, boolean kE, String...t) {
-		this.request = r;
-		this.template = t;
-		this.reference = ref;
-		this.keepEmpty = kE;
-	}
-	
 	private WikimediaRequest<List<Article>> request;
 	private String[] template;
 	private Reference reference;
 	private boolean keepEmpty = false;
+	private boolean lowerCaseMode = false;
 	
 	
 	public WikimediaRequest<List<Article>> getRequest() {
@@ -113,6 +122,14 @@ public class NormdatenTask2Configuration {
 
 	public void setKeepEmpty(boolean keepEmpty) {
 		this.keepEmpty = keepEmpty;
+	}
+
+	public boolean isLowerCaseMode() {
+		return lowerCaseMode;
+	}
+
+	public void setLowerCaseMode(boolean lowerCaseMode) {
+		this.lowerCaseMode = lowerCaseMode;
 	}
 
 }
