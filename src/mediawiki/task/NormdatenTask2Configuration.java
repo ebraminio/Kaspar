@@ -17,6 +17,11 @@ public class NormdatenTask2Configuration {
 			new Reference(new Property(143), new ItemSnak(328)),
 			"Authority control", "Normdaten"
 			);
+	public static final NormdatenTask2Configuration ENWIKI2 = new NormdatenTask2Configuration(
+			new CategoryMemberRequest("Category:VIAF not on Wikidata",0),
+			new Reference(new Property(143), new ItemSnak(328)),
+			"Authority control", "Normdaten"
+			);
 	public static final NormdatenTask2Configuration FRWIKI = new NormdatenTask2Configuration(
 			new TemplateEmbeddedInRequest("Modèle:Autorité",0),
 			new Reference(new Property(143), new ItemSnak(8447)),
@@ -64,7 +69,7 @@ public class NormdatenTask2Configuration {
 			);
 	
 	public static final NormdatenTask2Configuration CAWIKI_TAXON = new NormdatenTask2Configuration(
-			new TemplateEmbeddedInRequest("Plantilla:Bases de dades taxonòmiques", 0),
+			new CategoryMemberRequest("Categoria:Bases de dades taxonòmiques amb paràmetres exportables a Wikidata",0),
 			new Reference(new Property(143), new ItemSnak(199693)),
 			"Bases de dades taxonòmiques","BDT"
 			);
@@ -72,6 +77,7 @@ public class NormdatenTask2Configuration {
 	static {
 		CAWIKI_TAXON.setLowerCaseMode(true);
 		CAWIKI.setKeepEmpty(true);
+		FRWIKI.setSummary("Les valeurs des paramètres de {{Autorité}} ont été transférées vers Wikidata");
 	}
 	
 	
@@ -86,6 +92,7 @@ public class NormdatenTask2Configuration {
 	private Reference reference;
 	private boolean keepEmpty = false;
 	private boolean lowerCaseMode = false;
+	private String summary = null;
 	
 	
 	public WikimediaRequest<List<Article>> getRequest() {
@@ -130,6 +137,16 @@ public class NormdatenTask2Configuration {
 
 	public void setLowerCaseMode(boolean lowerCaseMode) {
 		this.lowerCaseMode = lowerCaseMode;
+	}
+
+	
+	public String getSummary() {
+		return summary == null ? getTemplate()+" moved to wikidata" : summary;
+	}
+	
+
+	public void setSummary(String summary) {
+		this.summary = summary;
 	}
 
 }

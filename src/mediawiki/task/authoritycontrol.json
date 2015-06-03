@@ -75,6 +75,10 @@
   "pattern": "500\\d{6}",
   "property": 245
  },
+ "JPG": {
+  "pattern": "500\\d{6}",
+  "property": 245
+ },
  "LCCN": {
   "pattern": "(|n|nb|nr|no|ns|sh|sj|sn)([4-9][0-9]|00|20[0-1][0-9])[0-9]{6}",
   "property": 244
@@ -171,6 +175,26 @@
   "pattern": "\\d{4}\\-\\d{3}(\\d|X)",
   "property": 236
  },
+ "OCLC": {
+  "pattern": "\\d+",
+  "property": 243
+ },
+ "HDS": {
+  "pattern": "(500\\d\\d|[1-4]\\d{4}|[1-9]\\d{0,3}|)",
+  "property": 902
+ },
+ "HLS": {
+  "pattern": "(500\\d\\d|[1-4]\\d{4}|[1-9]\\d{0,3}|)",
+  "property": 902
+ },
+ "DHS": {
+  "pattern": "(500\\d\\d|[1-4]\\d{4}|[1-9]\\d{0,3}|)",
+  "property": 902
+ },
+ "DSS": {
+  "pattern": "(500\\d\\d|[1-4]\\d{4}|[1-9]\\d{0,3}|)",
+  "property": 902
+ },
  
  
  
@@ -179,7 +203,7 @@
   "property": 1348
  },
  "BIOLIB": {
-  "pattern": "\\d{6}",
+  "pattern": "\\d{4,6}",
   "property": 838
  },
  "PLANTLIST": {

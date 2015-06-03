@@ -1,7 +1,12 @@
 package mediawiki.task;
 
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +21,7 @@ import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
 import mediawiki.info.wikibase.Statement;
 import mediawiki.info.wikibase.snaks.StringSnak;
+import mediawiki.info.wikibase.snaks.URLSnak;
 import mediawiki.request.CategoryMemberRequest;
 import mediawiki.request.ContentRequest;
 import mediawiki.request.EditRequest;
@@ -27,6 +33,8 @@ import mediawiki.request.wikibase.GetSpecificStatementRequest;
 import mediawiki.request.wikibase.SetReferenceRequest;
 
 import org.json.JSONObject;
+
+import util.GetRequest;
 
 import datasets.in.GND;
 import datasets.in.VIAF;
@@ -138,27 +146,32 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							if(e.getKey().equalsIgnoreCase("ISNI")){
 								value = value.replaceAll("(\\d{4})(\\d{4})(\\d{4})(\\d{3}[\\dX])", "$1 $2 $3 $4");
 								value = value.replaceAll("(\\d{4})\\s{2,}(\\d{4})\\s{2,}(\\d{4})\\s{2,}(\\d{3}[\\dX])", "$1 $2 $3 $4");
-							}
+							} else 
 							if(e.getKey().equalsIgnoreCase("BNF")){
 								value = value.replaceAll("cb(\\d{8}[0-9bcdfghjkmnpqrstvwxz])", "$1");
-							}
+							} else
 							if(e.getKey().equalsIgnoreCase("NLA")){
 								value = value.replaceAll("0000([1-9][0-9]{0,11})", "$1");
-							}
+							} else
 							if(e.getKey().equalsIgnoreCase("PLANTLIST") && e.getValue().matches("\\d+")){
 								value = t.get("PREFIX")+"-"+e.getValue();
+							} else
+							if(e.getKey().equalsIgnoreCase("CANTIC")){
+								value = value.replaceAll("(a\\d{7}[0-9x])\\/\\d+", "$1");
+							} else
+							if(e.getKey().equalsIgnoreCase("ORCID") && ! e.getValue().matches("0000-000(1-[5-9]|2-[0-9]|3-[0-4])\\d\\d\\d-\\d\\d\\d[\\dX]")){
+								value = value.replaceAll("\\s+", "-");
 							}
 							
 							try{
-								if(ac.getJSONObject(e.getKey()).getInt("property") == 227 && ! GND.hasEntry(value) && value.matches(ac.getJSONObject(e.getKey()).getString("pattern"))){
-									newParameters.remove(e.getKey());
-									System.out.println("** 404 Error for "+e.getKey()+" value "+value+". ready for removal");
-									continue;
-								}
-								if(ac.getJSONObject(e.getKey()).getInt("property") == 214 && ! VIAF.hasEntry(value) && value.matches(ac.getJSONObject(e.getKey()).getString("pattern"))){
-									newParameters.remove(e.getKey());
-									System.out.println("** 404 Error for "+e.getKey()+" value "+value+". ready for removal");
-									continue;
+								if(value.matches(ac.getJSONObject(e.getKey()).getString("pattern"))){
+									String u = (String) getWikidataConnection().request(new GetSpecificStatementRequest("P"+ac.getJSONObject(e.getKey()).getInt("property"), new Property(1630))).get(0).getClaim().getSnak().getValue();
+									u = u.replaceAll("\\$1", URLEncoder.encode(value, "UTF-8"));
+									if(! reachable(new URL(u))){
+										newParameters.remove(e.getKey());
+										System.out.println("** 404 Error for "+e.getKey()+" value "+value+". ready for removal");
+										continue;
+									}
 								}
 							}catch(Exception e2){
 								System.out.println("** unknown error while checking external databases: "+e2.getClass().getCanonicalName()+" "+e2.getMessage());
@@ -230,7 +243,8 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							regex += "("+Pattern.quote(template)+")|"; // 
 						}
 						regex = regex.substring(0, regex.length()-1);
-						regex+= ")[\\|\\p{L}\\d\\[\\]\\=\\_\\s\\ \\/\\\\\\-\\(\\)\\,\\.\\%\\+\\-]+\\}\\}"; // [.&&[^\\{^\\}^\\<^\\>]]
+						regex+= ")[^\\{\\}\\<\\>]+\\}\\}"; // [\\|\\p{L}\\d\\[\\]\\=\\_\\s\\ \\/\\\\\\-\\(\\)\\,\\.\\%\\+\\-]+
+						
 						
 						String nw  = old.replaceAll(regex, "{{"+config.getTemplate()+(newParameters.size() > 0 ? "|"+convertToTemplateProperties(newParameters) : "")+"}}");
 						if(nw.equals(old)){
@@ -242,7 +256,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							removable = false;
 						}
 						if(removable){
-							getWikipediaConnection().request(new EditRequest(a, nw, config.getTemplate()+" moved to wikidata"));
+							getWikipediaConnection().request(new EditRequest(a, nw, config.getSummary()));
 							System.out.println("** template replaced");
 						}
 					} 
@@ -265,6 +279,15 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 		if(result.length() > 0)
 			result = result.substring(1).trim();
 		return result;
+	}
+	
+	private static boolean reachable(URL u) throws IOException{
+		try{
+			new GetRequest(u).request();
+		}catch(FileNotFoundException e){
+			return false;
+		}
+		return true;
 	}
 
 }
