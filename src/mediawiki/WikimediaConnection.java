@@ -2,6 +2,7 @@ package mediawiki;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,6 +33,9 @@ public class WikimediaConnection implements Cloneable {
 	private ArrayList<RequestListener> listener = new ArrayList<>();
 	private GlobalWikimediaConnection globalcon = null;
 	
+	private long editInterval = 0L;
+	private Date lastEdit = null;
+	
 	public WikimediaConnection(String apihref){
 		setApihref(apihref);
 	}
@@ -44,6 +48,31 @@ public class WikimediaConnection implements Cloneable {
 	
 	public WikimediaConnection(Project s){
 		this(s.getURLPrefix(),s.getURLSuffix());
+	}
+	
+	public <T> T request(WikimediaRequest<T> r) throws Exception{
+		if(r instanceof LoginRequest)
+			setLoginRequest((LoginRequest)r);
+		T o = null;
+		if(r instanceof ManipulativeRequest){
+			if(isTestState()){
+				System.out.println("test state edit: "+r.toString());
+				return null;
+			}else{
+				if(editInterval != 0L && lastEdit != null && (new Date().getTime() < lastEdit.getTime()+editInterval)){
+					Thread.currentThread().sleep(lastEdit.getTime()+editInterval-new Date().getTime());
+				}
+				synchronized(editsynchronizer){
+					o = r.request(this);
+				}
+				lastEdit = new Date();
+			}
+		}else{
+			o = r.request(this);
+		}
+		log(r);
+		fireRequestEvent(new RequestEvent(r));
+		return o;
 	}
 
 	public String getWikiname() {
@@ -62,27 +91,6 @@ public class WikimediaConnection implements Cloneable {
 		this.apihref = apihref;
 	}
 
-	public <T> T request(WikimediaRequest<T> r) throws Exception{
-		if(r instanceof LoginRequest)
-			setLoginRequest((LoginRequest)r);
-		T o = null;
-		if(r instanceof ManipulativeRequest){
-			if(isTestState()){
-				System.out.println("test state edit: "+r.toString());
-				return null;
-			}else{
-				synchronized(editsynchronizer){
-					o = r.request(this);
-				}
-			}
-		}else{
-			o = r.request(this);
-		}
-		log(r);
-		fireRequestEvent(new RequestEvent(r));
-		return o;
-	}
-	
 	private void log(WikimediaRequest<?> r){
 		if(statistic.containsKey(r.getClass())){
 			statistic.put((Class<? extends WikimediaRequest<?>>) r.getClass(), statistic.get(r.getClass())+1);
@@ -205,6 +213,14 @@ public class WikimediaConnection implements Cloneable {
 	}
 	public boolean isGloballyConnected(){
 		return getGlobalConnection() != null;
+	}
+
+	public void setEditInterval(long milliseconds){
+		editInterval = milliseconds;
+	}
+	
+	public long getEditInterval(){
+		return editInterval;
 	}
 	
 }
