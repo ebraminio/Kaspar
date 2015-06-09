@@ -21,7 +21,6 @@ public class CoordinatesTask extends WikipediaWikidataTask {
 	public CoordinatesTask(WikimediaConnection wikidata,
 			WikimediaConnection wikipedia) {
 		super(wikidata, wikipedia);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

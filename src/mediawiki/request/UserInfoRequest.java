@@ -7,7 +7,6 @@ import mediawiki.WikimediaRequest;
 public class UserInfoRequest extends WikimediaRequest<String> {
 
 	public UserInfoRequest() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

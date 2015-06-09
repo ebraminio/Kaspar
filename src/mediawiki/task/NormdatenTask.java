@@ -127,7 +127,6 @@ public class NormdatenTask extends WikipediaWikidataTask {
 				increaseDone();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

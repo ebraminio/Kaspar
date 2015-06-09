@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.content.AbstractContentBody;
 import org.apache.http.entity.mime.content.StringBody;
 
@@ -23,12 +24,7 @@ abstract public class WikimediaRequest<T extends Object> {
 	}
 	
 	public void setProperty(String k, String v) {
-		try {
-			setProperty(k, new StringBody(v, "text/plain", Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		setProperty(k, new StringBody(v, ContentType.create("text/palin", "UTF-8")));
 	}
 	
 	public Map<String, AbstractContentBody> getProperties(){

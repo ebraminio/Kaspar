@@ -67,7 +67,6 @@ public class GNDReferencingTask extends WikimediaTask{
 				}
 			}
 		} catch(Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

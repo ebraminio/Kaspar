@@ -4,6 +4,8 @@ package mediawiki.task;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -164,17 +166,22 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							}
 							
 							try{
-								if(value.matches(ac.getJSONObject(e.getKey()).getString("pattern"))){
-									String u = (String) getWikidataConnection().request(new GetSpecificStatementRequest("P"+ac.getJSONObject(e.getKey()).getInt("property"), new Property(1630))).get(0).getClaim().getSnak().getValue();
-									u = u.replaceAll("\\$1", URLEncoder.encode(value, "UTF-8"));
+								if(value != null && value.matches(ac.getJSONObject(e.getKey()).getString("pattern"))){
+									String formatter = (String) getWikidataConnection().request(new GetSpecificStatementRequest("P"+ac.getJSONObject(e.getKey()).getInt("property"), new Property(1630))).get(0).getClaim().getSnak().getValue();
+									String u = formatter.replaceAll("\\$1", URLEncoder.encode(value, "UTF-8"));
 									if(! reachable(new URL(u))){
 										newParameters.remove(e.getKey());
 										System.out.println("** 404 Error for "+e.getKey()+" value "+value+". ready for removal");
 										continue;
 									}
+									String newu = detectRedirect(formatter, value);
+									if(newu != null && newu.matches(ac.getJSONObject(e.getKey()).getString("pattern")) ){
+										value = newu;
+										System.out.println("** redirect for "+e.getKey()+" detected. new value: "+value+"");
+									}
 								}
 							}catch(Exception e2){
-								System.out.println("** unknown error while checking external databases: "+e2.getClass().getCanonicalName()+" "+e2.getMessage());
+								System.out.println("** unknown error while checking external databases for "+e.getKey()+": "+e2.getClass().getCanonicalName()+" "+e2.getMessage());
 							}
 							
 							
@@ -288,6 +295,21 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 			return false;
 		}
 		return true;
+	}
+	
+	private static String detectRedirect(String formatter, String identifier) throws MalformedURLException, UnsupportedEncodingException, IOException{
+		String newidentifier = new GetRequest(formatter.replaceAll("\\$1", URLEncoder.encode(identifier, "UTF-8"))).detectRedirect().toExternalForm();
+		
+		formatter = formatter.replaceAll("\\$1", "(.+)")
+				.replaceAll("https\\:\\/\\/","http[s]?://")
+				.replaceAll("http\\:\\/\\/","http[s]?://");
+		
+		newidentifier = newidentifier.replaceAll(formatter, "$1");
+		
+		if(identifier.equals(newidentifier))
+			return null;
+		
+		return newidentifier;
 	}
 
 }

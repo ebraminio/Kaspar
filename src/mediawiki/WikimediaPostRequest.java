@@ -48,7 +48,7 @@ public class WikimediaPostRequest extends PostRequest {
 				System.out.println("Relogin initiated...");
 				con.relogin();
 			}
-			throw new WikimediaException("Server Message: "+error);
+			throw new WikimediaException("Server Message from "+con.getApihref()+": "+error);
 		}
 		return d;
 	}

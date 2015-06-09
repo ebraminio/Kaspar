@@ -22,7 +22,6 @@ public class GeoNamesStateTask extends WikimediaTask {
 
 	public GeoNamesStateTask(WikimediaConnection con) {
 		super(con);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override

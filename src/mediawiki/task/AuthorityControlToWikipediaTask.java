@@ -16,11 +16,9 @@ import mediawiki.request.wikibase.GetSitelinkRequest;
 
 public class AuthorityControlToWikipediaTask extends WikipediaWikidataTask {
 
-
 	public AuthorityControlToWikipediaTask(WikimediaConnection wikidata,
 			WikimediaConnection wikipedia) {
 		super(wikidata, wikipedia);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -59,10 +57,8 @@ public class AuthorityControlToWikipediaTask extends WikipediaWikidataTask {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 

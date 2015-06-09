@@ -15,7 +15,6 @@ public class GlobalWikimediaConnection {
 	private boolean teststate = false;
 	
 	public GlobalWikimediaConnection() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public <T> T request(Project p, WikimediaRequest<T> r) throws Exception{

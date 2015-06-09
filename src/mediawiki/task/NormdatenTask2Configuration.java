@@ -27,6 +27,11 @@ public class NormdatenTask2Configuration {
 			new Reference(new Property(143), new ItemSnak(8447)),
 			"Autorité","Authority control","Normdaten"
 			);
+	public static final NormdatenTask2Configuration FRWIKI2 = new NormdatenTask2Configuration(
+			new CategoryMemberRequest("Catégorie:Page utilisant le modèle Autorité avec un paramètre obsolète",0),
+			new Reference(new Property(143), new ItemSnak(8447)),
+			"Autorité","Authority control","Normdaten"
+			);
 	public static final NormdatenTask2Configuration MKWIKI = new NormdatenTask2Configuration(
 			new CategoryMemberRequest("Категорија:Страници со нормативна контрола со параметри",0),
 			new Reference(new Property(143), new ItemSnak(842341)),
@@ -78,6 +83,7 @@ public class NormdatenTask2Configuration {
 		CAWIKI_TAXON.setLowerCaseMode(true);
 		CAWIKI.setKeepEmpty(true);
 		FRWIKI.setSummary("Les valeurs des paramètres de {{Autorité}} ont été transférées vers Wikidata");
+		FRWIKI2.setSummary("Les valeurs des paramètres de {{Autorité}} ont été transférées vers Wikidata");
 	}
 	
 	
