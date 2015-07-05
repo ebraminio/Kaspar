@@ -1,5 +1,9 @@
 package mediawiki.info;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.regex.Matcher;
+
 public class Project {
 
 	private String site;
@@ -25,7 +29,7 @@ public class Project {
 	}
 	
 	public String getLanguage(){
-		return site.replaceAll(getProject(), "");
+		return site.replaceAll(Matcher.quoteReplacement(getProject()), "");
 	}
 	
 	public String getURLSuffix(){
@@ -49,5 +53,18 @@ public class Project {
 	@Override
 	public String toString() {
 		return getSite();
+	}
+	
+	public static Project forAPIhref(String api) throws MalformedURLException{
+		api = new URL(api).getHost();
+		api = api.replaceAll("\\.org", "");
+		if(api.equals("wikidata"))
+			return new Project("wikidatawiki");
+		if(api.equals("commons.wikimedia"))
+			return new Project("commonswiki");
+		if(api.endsWith("wikipedia"))
+			api = api.replaceAll("wikipedia", "wiki");
+		api = api.replaceAll("\\.", "");
+		return new Project(api);
 	}
 }

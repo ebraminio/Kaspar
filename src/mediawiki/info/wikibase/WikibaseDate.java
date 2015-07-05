@@ -185,5 +185,19 @@ public class WikibaseDate {
 		return null;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		if(!(obj instanceof WikibaseDate))
+			return false;
+		WikibaseDate d = (WikibaseDate) obj;
+		return this.date.equals(d.date)
+			&& this.timezone == d.timezone
+			&& this.before == d.before
+			&& this.after == d.after
+			&& this.precision == d.precision
+			&& this.calendarmodel.equals(d.calendarmodel);
+	}
 }
 

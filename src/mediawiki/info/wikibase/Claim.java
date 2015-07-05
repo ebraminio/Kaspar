@@ -54,4 +54,19 @@ public class Claim extends XMLRepresented {
 		e.convert(element.getChildren("datavalue").get(0));
 		setSnak(e);
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		if(!(obj instanceof Claim))
+			return false;
+		Claim c = (Claim) obj;
+		return property.equals(c.property) && entity.equals(c.entity);
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString()+"["+property.toString()+"="+entity.toString()+"]";
+	}
 }

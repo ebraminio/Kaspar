@@ -41,12 +41,19 @@ public class GetRequest {
 	public URL detectRedirect() throws IOException {
 		URL u = url;
 		HttpURLConnection ucon;
+		int i = 0;
 		do{
+			i++;
+			if(i >= 100)
+				throw new IOException("redirect limit exceeded");
 			ucon = (HttpURLConnection) u.openConnection();
 			ucon.setInstanceFollowRedirects(false);
 			if(ucon.getHeaderField("Location") == null)
 				break;
-			u = new URL(u,ucon.getHeaderField("Location"));
+			URL u2 = new URL(u,ucon.getHeaderField("Location"));
+			if(u.equals(u2))
+				break;
+			u = u2;
 		}while(ucon.getResponseCode() != 200);
 		return u;
 	}

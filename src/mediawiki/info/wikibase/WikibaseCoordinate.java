@@ -65,4 +65,18 @@ public class WikibaseCoordinate {
 	public String toString() {
 		return latitude+":"+longitude;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		if(!(obj instanceof WikibaseCoordinate))
+			return false;
+		WikibaseCoordinate c = (WikibaseCoordinate) obj;
+		return this.latitude == c.latitude
+			&& this.longitude == c.longitude
+			&& this.altitude == c.altitude
+			&& this.precision == c.precision
+			&& this.globe.equals(c.globe);
+	}
 }

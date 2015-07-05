@@ -29,7 +29,7 @@ public class LoginRequest extends WikimediaRequest<Object> {
 		Element answer = d.getRootElement().getChildren("login").get(0);
 		
 		String token = answer.getAttribute("token").getValue();
-		c.setWikiname(answer.getAttribute("cookieprefix").getValue());
+	//	c.setWikiname(answer.getAttribute("cookieprefix").getValue());
 		
 		WikimediaPostRequest p2 = new WikimediaPostRequest(c);
 		p2.putData("action", "login");

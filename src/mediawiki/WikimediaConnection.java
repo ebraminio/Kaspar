@@ -1,6 +1,7 @@
 package mediawiki;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,9 +18,7 @@ import mediawiki.request.ManipulativeRequest;
 
 public class WikimediaConnection implements Cloneable {
 
-	private String wikiname = "";
 	private String apihref = "";
-	private String language = "";
 	
 	private LoginRequest loginrequest = null;
 	private boolean login = false;
@@ -42,8 +41,6 @@ public class WikimediaConnection implements Cloneable {
 	
 	public WikimediaConnection(String language, String wikiname){
 		this("https://"+language+"."+wikiname+"/w/api.php");
-		setWikiname(wikiname);
-		setLanguage(language);
 	}
 	
 	public WikimediaConnection(Project s){
@@ -75,16 +72,8 @@ public class WikimediaConnection implements Cloneable {
 		return o;
 	}
 
-	public String getWikiname() {
-		return wikiname;
-	}
-
 	public String getApihref() {
 		return apihref;
-	}
-
-	public void setWikiname(String wikiname) {
-		this.wikiname = wikiname;
 	}
 
 	public void setApihref(String apihref) {
@@ -113,14 +102,6 @@ public class WikimediaConnection implements Cloneable {
 	
 	public Map<String, String> getCookies(){
 		return cookies;
-	}
-
-	public String getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(String language) {
-		this.language = language;
 	}
 
 	public boolean isBot() {
@@ -223,4 +204,7 @@ public class WikimediaConnection implements Cloneable {
 		return editInterval;
 	}
 	
+	public Project getProject() throws MalformedURLException{
+		return Project.forAPIhref(getApihref());
+	}
 }

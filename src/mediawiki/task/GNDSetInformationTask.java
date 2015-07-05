@@ -1,31 +1,36 @@
 package mediawiki.task;
 
-import static main.GNDLoad.addClaim;
-import static main.GNDLoad.importDate;
-
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import org.json.JSONException;
+
 import javat.xml.Element;
 import datasets.in.GND;
 import datasets.in.MARC;
 import mediawiki.WikidataQuery;
 import mediawiki.WikimediaConnection;
 import mediawiki.WikimediaTask;
+import mediawiki.WikimediaUtil;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
 import mediawiki.info.wikibase.Reference;
+import mediawiki.info.wikibase.Statement;
 import mediawiki.info.wikibase.WikibaseDate;
 import mediawiki.info.wikibase.snaks.DateSnak;
 import mediawiki.info.wikibase.snaks.ItemSnak;
 import mediawiki.request.wikibase.AddQualifierRequest;
+import mediawiki.request.wikibase.CreateClaimRequest;
 import mediawiki.request.wikibase.GetLabelRequest;
 import mediawiki.request.wikibase.GetSpecificStatementRequest;
+import mediawiki.request.wikibase.HasClaimRequest;
 import mediawiki.request.wikibase.SetLabelRequest;
-
-import static main.GNDSetInformation.importPlace;
+import mediawiki.request.wikibase.SetReferenceRequest;
 
 public class GNDSetInformationTask extends WikimediaTask {
 
@@ -44,6 +49,9 @@ public class GNDSetInformationTask extends WikimediaTask {
 			WikidataQuery wdq = new WikidataQuery("CLAIM[31:5] AND CLAIM[227]");
 			
 			List<Integer> l = wdq.request();
+			
+			Collections.shuffle(l);
+			
 			System.out.println(l.size()+" Einträge geladen");
 			for(Integer b : l){
 				if(isStopped())
@@ -75,7 +83,7 @@ public class GNDSetInformationTask extends WikimediaTask {
 					
 					if(e.getChildren("dateOfBirth").size() > 0){
 						marc = GND.getMARCEntry(gnd);
-						mediawiki.info.wikibase.Statement s = importDate(wikidata, e.getChildren("dateOfBirth").get(0).getText(),  wikibase, new Property(569), ref);
+						Statement s = WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(new Property(569), new DateSnak(GND.parseWikibaseDate(e.getChildren("dateOfBirth").get(0).getText()))), ref);
 						if(isGeborenCa(marc) && s != null){
 							getConnection().request(new AddQualifierRequest(s, new Claim(1480,5727902)));
 							System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\tCirca-Qualifier created");
@@ -83,7 +91,7 @@ public class GNDSetInformationTask extends WikimediaTask {
 					}
 					if(e.getChildren("dateOfDeath").size() > 0){
 						marc = (marc != null ? marc : GND.getMARCEntry(gnd));
-						mediawiki.info.wikibase.Statement s = importDate(wikidata, e.getChildren("dateOfDeath").get(0).getText(),  wikibase, new Property(570), ref);
+						Statement s = WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(new Property(570), new DateSnak(GND.parseWikibaseDate(e.getChildren("dateOfDeath").get(0).getText()))), ref);
 						if(isGestorbenCa(marc) && s != null) {
 							getConnection().request(new AddQualifierRequest(s, new Claim(1480,5727902)));
 							System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\tCirca-Qualifier created");
@@ -101,7 +109,7 @@ public class GNDSetInformationTask extends WikimediaTask {
 						}
 						if(i != null){
 							Claim claim = new Claim(new Property(21),i);
-							addClaim(wikidata, wikibase, claim, ref);
+							WikimediaUtil.addTrustedStatement(wikidata, wikibase, claim, ref);
 						}
 					}
 				/*	VIAF disabled! 
@@ -130,46 +138,46 @@ public class GNDSetInformationTask extends WikimediaTask {
 						}
 					}
 					try{
-						importPlace(wikidata, wikibase, e, "placeOfBirth", 19, ref, "place", "CLAIM[131]");
+						handleComplexImport(wikidata, wikibase, e, "placeOfBirth", 19, ref, "place", "CLAIM[131]");
 					}catch(Exception exception){exception.printStackTrace(); continue;}
 					try{
-						importPlace(wikidata,  wikibase, e, "placeOfDeath", 20, ref, "place", "CLAIM[131]");
+						handleComplexImport(wikidata,  wikibase, e, "placeOfDeath", 20, ref, "place", "CLAIM[131]");
 					}catch(Exception exception){exception.printStackTrace(); continue;}
 					try{
-						importPlace(wikidata,  wikibase, e, "placeOfActivity", 937, ref, "place", "CLAIM[131]");
+						handleComplexImport(wikidata,  wikibase, e, "placeOfActivity", 937, ref, "place", "CLAIM[131]");
 					}catch(Exception exception){exception.printStackTrace(); continue;}
 					try{
-						importPlace(wikidata, wikibase, e, "professionOrOccupation", 106, ref, "occupation", "claim[31:(TREE[13516667][][279])]");
+						handleComplexImport(wikidata, wikibase, e, "professionOrOccupation", 106, ref, "occupation", "claim[31:(TREE[13516667][][279])]");
 					}catch(Exception exception){exception.printStackTrace(); continue;}
 					if(e.getChildren("academicDegree").size() > 0){
 						switch(e.getChildren("academicDegree").get(0).getText()){
 						case "Doktor":
 						case "Dr." : 
-							addClaim(wikidata,  wikibase, new Claim(512,849697), ref);
+							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(512,849697), ref);
 							break;
 						case "Dr. iur.":
 						case "Dr. jur.":
-							addClaim(wikidata,  wikibase, new Claim(512,959320), ref);
+							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(512,959320), ref);
 							break;
 						case "Dr. med":
 						case "Dr. med.":
-							addClaim(wikidata,  wikibase, new Claim(512,913404), ref);
+							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(512,913404), ref);
 							break;
 						case "Prof.":
 						case "Prof":
 						case "Professor":
 						case "Professorin":
-							addClaim(wikidata,  wikibase, new Claim(106,121594), ref);
+							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(106,121594), ref);
 							break; 
 						case "Prof. Dr.":
 						case "Prof., Dr.":
 						case "Dr., Professor":
 						case "Prof.Dr.":
-							addClaim(wikidata,  wikibase, new Claim(106,121594), ref);
-							addClaim(wikidata,  wikibase, new Claim(512,849697), ref);
+							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(106,121594), ref);
+							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(512,849697), ref);
 							break;
 						case "Graf":
-							addClaim(wikidata,  wikibase, new Claim(97,28989), ref);
+							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(97,28989), ref);
 							break;
 						default:
 							System.out.println(e.getChildren("academicDegree").get(0).getText());
@@ -283,5 +291,31 @@ public class GNDSetInformationTask extends WikimediaTask {
 		}
 		return false;
 	}
-
+	
+	private static void handleComplexImport(WikimediaConnection wikidata, String base, Element e, String tag, int prop, Reference ref, String referer, String condition) throws IOException, JSONException, Exception{
+		if(! (e.getChildren(tag).size() > 0 && e.getChildren(tag).get(0).getChildren("Description").size() > 0))
+			return;
+		ArrayList<Claim> cs = new ArrayList<>();
+		for(Element e2 : e.getChildren(tag)){
+			String gnd = e2.getChildren("Description").get(0).getAttribute("about").getValue().substring("http://d-nb.info/gnd/".length());
+			WikidataQuery q = new WikidataQuery("STRING[227:\""+gnd+"\"] AND ("+condition+")");
+			List<Integer> wqresult = q.request(); 
+			if(wqresult.size() == 1){
+				int place = wqresult.get(0);
+				cs.add(new Claim(prop,place));
+			}
+		}
+		if(wikidata.request(new HasClaimRequest(base, new Property(prop))) ){
+			for(Claim c : cs){
+				WikimediaUtil.addTrustedStatement(wikidata, base, c, ref);
+				System.out.println("created or referenced: "+c);
+			}
+		}else{
+			for(Claim c : cs){
+				Statement s = wikidata.request(new CreateClaimRequest(base, c));
+				wikidata.request(new SetReferenceRequest(s, ref));
+				System.out.println("created and referenced: "+c);
+			}
+		}
+	}
 }

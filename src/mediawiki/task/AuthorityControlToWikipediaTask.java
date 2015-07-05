@@ -1,64 +1,50 @@
 package mediawiki.task;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Scanner;
-
 import mediawiki.WikimediaConnection;
-import mediawiki.info.Project;
-import mediawiki.info.wikibase.Sitelink;
+import mediawiki.info.Article;
 import mediawiki.request.ContentRequest;
 import mediawiki.request.EditRequest;
 import mediawiki.request.GetTemplatesValuesRequest;
-import mediawiki.request.wikibase.GetSitelinkRequest;
+import mediawiki.task.config.ACtWPConfiguration;
+import mediawiki.task.config.ACtWPSelector;
 
 public class AuthorityControlToWikipediaTask extends WikipediaWikidataTask {
 
+	private ACtWPConfiguration config;
+	
 	public AuthorityControlToWikipediaTask(WikimediaConnection wikidata,
-			WikimediaConnection wikipedia) {
+			WikimediaConnection wikipedia, ACtWPConfiguration config) {
 		super(wikidata, wikipedia);
+		this.config = config;
 	}
 
 	@Override
 	public void run() {
+		ACtWPSelector selector = config.getSelector();
+		selector.prepare(getWikidataConnection(), getWikipediaConnection());
 		try {
-			Scanner s = new Scanner(new URL("https://tools.wmflabs.org/autolist/index.php?language=en&project=wikipedia&category=Wikipedia%20articles%20with%20authority%20control%20information&depth=12&wdq=%28CLAIM%5B227%5D%20OR%20CLAIM%5B214%5D%20OR%20CLAIM%5B244%5D%20OR%20CLAIM%5B213%5D%20OR%20CLAIM%5B496%5D%20OR%20CLAIM%5B906%5D%20OR%20CLAIM%5B269%5D%20OR%20CLAIM%5B268%5D%20OR%20CLAIM%5B651%5D%20OR%20CLAIM%5B245%5D%20OR%20CLAIM%5B434%5D%20OR%20CLAIM%5B409%5D%20OR%20CLAIM%5B349%5D%20OR%20CLAIM%5B1015%5D%20OR%20CLAIM%5B1053%5D%20OR%20CLAIM%5B650%5D%29%20AND%20LINK%5Benwiki%5D&statementlist=&run=Run&mode_manual=or&mode_cat=not&mode_wdq=and&mode_find=or&chunk_size=10000&download=1").openStream());
-			while(s.hasNextLine()){
-				try {
-					String base = s.nextLine();
-					Sitelink sl = getWikidataConnection().request(new GetSitelinkRequest(base,new Project("enwiki")));
-					if(getWikipediaConnection().request(new GetTemplatesValuesRequest(sl.getTitle(),"Authority control")).size() > 0)
+			selector.fetch();
+			while(selector.hasNext()){
+				try{
+					Article a = selector.next();
+					System.out.println(a.getTitle());
+					if(getWikipediaConnection().request(new GetTemplatesValuesRequest(a, config.getTemplate())).size() > 0)
 						continue;
-					if(getWikipediaConnection().request(new GetTemplatesValuesRequest(sl.getTitle(), "bots")).size() !=  0 ){
+					if(getWikipediaConnection().request(new GetTemplatesValuesRequest(a, "bots")).size() !=  0 ){
 						System.out.println("** bot-template found");
 						continue;
 					}
-					String content = getWikipediaConnection().request(new ContentRequest(sl.getTitle()));
-					boolean flag = true;
-					for(String token : new String[]{"{{Persondata", "{{DEFAULTSORT:", "[[Category:"}){
-						if(content.indexOf(token) > -1){
-							content = content.substring(0,content.indexOf(token))+"{{Authority control}}\n"+content.substring(content.indexOf(token));
-							flag = false;
-							break;
-						}
-					}
-					if(flag){
-						content += "\n{{Authority control}}";
-					}
-					getWikipediaConnection().request(new EditRequest(sl.getTitle(), content, "embed authority control with wikidata information"));
-					System.out.println(sl.getTitle()+" edited");
-				} catch (Exception e) {
-					e.printStackTrace();
+					String content = getWikipediaConnection().request(new ContentRequest(a));
+					content = config.getPositioner().insert(content, config.getTemplate());
+					getWikipediaConnection().request(new EditRequest(a, content, "embed {{"+config.getTemplate()+"}} with wikidata information"));
+					System.out.println(a.getTitle()+" edited");
+				}catch(Exception e2){
+					e2.printStackTrace();
 				}
 			}
+			selector.close();
 			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
+		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 

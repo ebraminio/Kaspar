@@ -39,6 +39,16 @@ public class Statement extends XMLRepresented {
 		return ! references.isEmpty(); 
 	}
 	
+	public boolean hasReference(Property p){
+		if(! hasReferences())
+			return false;
+		for(Reference r : references)
+			for(Claim c : r)
+				if(c.getProperty().equals(p))
+					return true;
+		return false;
+	}
+	
 	public void convert(Element element) throws Exception { // ab claim
 		setId(element.getAttribute("id").getValue());
 		if(element.getChildren("references").size() > 0){

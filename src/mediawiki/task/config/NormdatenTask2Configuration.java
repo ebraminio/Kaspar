@@ -1,4 +1,4 @@
-package mediawiki.task;
+package mediawiki.task.config;
 
 import java.util.List;
 
@@ -40,7 +40,12 @@ public class NormdatenTask2Configuration {
 	public static final NormdatenTask2Configuration DAWIKI = new NormdatenTask2Configuration(
 			new CategoryMemberRequest("Kategori:Sider med autoritetsdata med parametre",0),
 			new Reference(new Property(143), new ItemSnak(181163)),
-			"Autoritetsdata","Authority control","Normdaten"
+			"Autoritetsdata","Normdata","Authority control","Normdaten"
+			);
+	public static final NormdatenTask2Configuration DEWIKI = new NormdatenTask2Configuration(
+			new TemplateEmbeddedInRequest("Vorlage:Normdaten",0),
+			new Reference(new Property(143), new ItemSnak(48183)),
+			"Normdaten"
 			);
 	public static final NormdatenTask2Configuration CAWIKI = new NormdatenTask2Configuration(
 			new CategoryMemberRequest("Categoria:Pàgines utilitzant control d'autoritats amb paràmetres",0),

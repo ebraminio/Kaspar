@@ -9,16 +9,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import mediawiki.ContinuingRequest;
 import mediawiki.WikimediaConnection;
+import mediawiki.WikimediaException;
 import mediawiki.WikimediaUtil;
 import mediawiki.info.Article;
+import mediawiki.info.Project;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
 import mediawiki.info.wikibase.Statement;
@@ -33,6 +38,8 @@ import mediawiki.request.WikiBaseItemRequest;
 import mediawiki.request.wikibase.CreateClaimRequest;
 import mediawiki.request.wikibase.GetSpecificStatementRequest;
 import mediawiki.request.wikibase.SetReferenceRequest;
+import mediawiki.task.config.NormdatenTask2Configuration;
+import mediawiki.task.config.NormdatenTask2ErrorHandler;
 
 import org.json.JSONObject;
 
@@ -45,6 +52,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 
 	
 	private NormdatenTask2Configuration config;
+	private HashSet<NormdatenTask2ErrorHandler> handlers = new HashSet<>();
 	
 	public NormdatenTask2(WikimediaConnection wikidata, WikimediaConnection wikipedia, NormdatenTask2Configuration c){
 		super(wikidata, wikipedia);
@@ -57,7 +65,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 		List<Article> articles;
 		try {
 			
-			InputStream in = NormdatenTask2.class.getResourceAsStream("authoritycontrol.json");
+			InputStream in = NormdatenTask2Configuration.class.getResourceAsStream("authoritycontrol.json");
 			StringBuffer b = new StringBuffer();
 			while(in.available() > 0){
 				byte[] buffer = new byte[1024];
@@ -72,9 +80,11 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 			}else if(config.getRequest() instanceof TemplateEmbeddedInRequest){
 				config.getRequest().setProperty("eidir", "descending");
 			}
+		/*	if(config.getRequest() instanceof ContinuingRequest)
+				((ContinuingRequest) config.getRequest()).setLimit(10); */
 			
 			articles = getWikipediaConnection().request(config.getRequest()); 
-			System.out.println("Alles geladen");
+			System.out.println(articles.size()+" Artikel geladen");
 			
 			
 			
@@ -85,7 +95,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 					
 					String base = (String) getWikipediaConnection().request(new WikiBaseItemRequest(a));
 					if(base == null){
-						System.out.println("** no wikidata item");
+						throwWarning(new NormdatenTask2Exception(a, "no wikidata item", NormdatenTask2ExceptionLevel.PROBLEM));
 						continue;
 					}
 					List<Map<String,String>> t2 = null;
@@ -97,18 +107,18 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							break;
 					}
 					if(t2 == null || t2.size() == 0){
-						System.out.println("** unknown alias embedded");
+						throwWarning(new NormdatenTask2Exception(a, "unknown alias embedded or recursive transclusion", NormdatenTask2ExceptionLevel.PROBLEM));
 						continue;
 					}
 					
 					if(t2.size() > 1){
-						System.out.println("** more than one template embedded");
+						throwWarning(new NormdatenTask2Exception(a, "more than one template embedded", NormdatenTask2ExceptionLevel.PROBLEM));
 						continue;
 					}
 					Map<String, String> t = t2.get(0);
 					
 					if(t.size() == 0){
-						System.out.println("** already moved to wikidata");
+						throwWarning(new NormdatenTask2Exception(a, "already moved to wikidata", NormdatenTask2ExceptionLevel.INFO));
 						continue;
 					}
 						
@@ -132,7 +142,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 						if(e.getKey().equalsIgnoreCase("1") && e.getValue().trim().length() == 0)
 							continue;
 						if(! ac.has(e.getKey()) && (e.getValue().trim().length() > 0 || (config.isKeepEmpty() && e.getValue().trim().length() == 0) ) ){
-							System.out.println("** unknown template property: "+e.getKey());
+							throwWarning(new NormdatenTask2Exception(a, "unknown template property", e.getKey(), NormdatenTask2ExceptionLevel.PROBLEM));
 							newParameters.put(e.getKey(),e.getValue());
 							removable = false;
 						}else{
@@ -140,11 +150,13 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 								if(config.isKeepEmpty()){
 									newParameters.put(e.getKey(),"");
 									removable = false;
-									System.out.println("** keep-empty-mode. empty template property: "+e.getKey());
+									throwWarning(new NormdatenTask2Exception(a, "keep-empty-mode. empty template property: "+e.getKey(), NormdatenTask2ExceptionLevel.INFO));
 								}
 								continue;
 							}
 							String value = e.getKey().equals("LCCN") && ! e.getValue().matches(ac.getJSONObject(e.getKey()).getString("pattern")) ? WikimediaUtil.formatLCCN(e.getValue()) : e.getValue();
+							if(e.getKey().equals("LCCN") && value == null)
+								value = e.getValue();
 							if(e.getKey().equalsIgnoreCase("ISNI")){
 								value = value.replaceAll("(\\d{4})(\\d{4})(\\d{4})(\\d{3}[\\dX])", "$1 $2 $3 $4");
 								value = value.replaceAll("(\\d{4})\\s{2,}(\\d{4})\\s{2,}(\\d{4})\\s{2,}(\\d{3}[\\dX])", "$1 $2 $3 $4");
@@ -174,19 +186,14 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 										System.out.println("** 404 Error for "+e.getKey()+" value "+value+". ready for removal");
 										continue;
 									}
-									String newu = detectRedirect(formatter, value);
-									if(newu != null && newu.matches(ac.getJSONObject(e.getKey()).getString("pattern")) ){
-										value = newu;
-										System.out.println("** redirect for "+e.getKey()+" detected. new value: "+value+"");
-									}
 								}
 							}catch(Exception e2){
-								System.out.println("** unknown error while checking external databases for "+e.getKey()+": "+e2.getClass().getCanonicalName()+" "+e2.getMessage());
+								throwWarning(new NormdatenTask2Exception(a, "unknown error while checking external databases", e.getKey()+": "+e2.getClass().getCanonicalName()+" "+e2.getMessage(), NormdatenTask2ExceptionLevel.EXTERNAL));
 							}
 							
 							
 							if(value == null || ! value.matches(ac.getJSONObject(e.getKey()).getString("pattern"))){
-								System.out.println("** malformed value for "+e.getKey()+": "+value);
+								throwWarning(new NormdatenTask2Exception(a, "malformed value", e.getKey()+": "+value, NormdatenTask2ExceptionLevel.PROBLEM));
 								newParameters.put(e.getKey(),e.getValue());
 								if(e.getKey().equalsIgnoreCase("PLANTLIST") && t.containsKey("PREFIX")){newParameters.put("PREFIX", t.get("PREFIX"));}
 								removable = false;
@@ -195,7 +202,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 								if(l.size() == 0){
 									Statement s = getConnection().request(new CreateClaimRequest(base, new Claim(ac.getJSONObject(e.getKey()).getInt("property"), new StringSnak(value))));
 									if(s == null){
-										System.out.println("** unable to add claim for "+e.getKey());
+										throwWarning(new NormdatenTask2Exception(a, "unable to add claim for "+e.getKey(), NormdatenTask2ExceptionLevel.INTERNAL));
 										removable = false;
 										newParameters.put(e.getKey(),e.getValue());
 										if(e.getKey().equalsIgnoreCase("PLANTLIST") && t.containsKey("PREFIX")){newParameters.put("PREFIX", t.get("PREFIX"));}
@@ -206,15 +213,31 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 								}else{
 									boolean flag2 = false;
 									String ss = "";
+									HashSet<String> wikidatavalues = new HashSet<>();
 									for(Statement s : l){
 										ss += ","+s.getClaim().getSnak().getValue();
+										wikidatavalues.add(s.getClaim().getSnak().getValue().toString());
 										if(s.getClaim().getSnak().getValue().equals(value)){
 											flag2 = true;
 										}
 									}
 									ss = ss.substring(1);
+									if(!flag2) {
+										try{
+											String formatter = (String) getWikidataConnection().request(new GetSpecificStatementRequest("P"+ac.getJSONObject(e.getKey()).getInt("property"), new Property(1630))).get(0).getClaim().getSnak().getValue();
+											String newu = detectRedirect(formatter, value);
+											if(newu != null && newu.matches(ac.getJSONObject(e.getKey()).getString("pattern")) ){
+												throwWarning(new NormdatenTask2Exception(a, "redirect for "+e.getKey()+" detected", "new value: "+value+"", NormdatenTask2ExceptionLevel.INFO));
+												if(wikidatavalues.contains(newu)){
+													flag2 = true;
+												}
+											}
+										}catch(Exception e2){
+											throwWarning(new NormdatenTask2Exception(a, "unknown error while checking external databases",  e.getKey()+": "+e2.getClass().getCanonicalName()+" "+e2.getMessage(), NormdatenTask2ExceptionLevel.EXTERNAL));
+										}
+									}
 									if(!flag2){
-										System.out.println("** different value on wikidata for "+e.getKey()+": "+value+"!="+ss);
+										throwWarning(new NormdatenTask2Exception(a, "different value on wikidata", e.getKey()+": "+value+"!="+ss, NormdatenTask2ExceptionLevel.PROBLEM));
 										newParameters.put(e.getKey(),e.getValue());
 										if(e.getKey().equalsIgnoreCase("PLANTLIST") && t.containsKey("PREFIX")){newParameters.put("PREFIX", t.get("PREFIX"));}
 									}
@@ -225,14 +248,14 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 					}
 					
 					if(getWikipediaConnection().request(new GetTemplatesValuesRequest(a, "bots")).size() !=  0 ){
-						System.out.println("** bot-template found");
+						throwWarning(new NormdatenTask2Exception(a, "bot-template found", NormdatenTask2ExceptionLevel.PROBLEM));
 						continue;
 					}
 					
 					removable = (newParameters.size() > 0 && newParameters.size() < t.size()) || removable;
 					
 					if(newParameters.size() >= t.size()){
-						System.out.println("** no effective reduction possible");
+						throwWarning(new NormdatenTask2Exception(a, "no effective reduction possible", NormdatenTask2ExceptionLevel.FINAL));
 						removable = false;
 					}
 					
@@ -250,32 +273,60 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							regex += "("+Pattern.quote(template)+")|"; // 
 						}
 						regex = regex.substring(0, regex.length()-1);
-						regex+= ")[^\\{\\}\\<\\>]+\\}\\}"; // [\\|\\p{L}\\d\\[\\]\\=\\_\\s\\ \\/\\\\\\-\\(\\)\\,\\.\\%\\+\\-]+
+						regex+= ")[^\\{\\}\\<\\>]+\\}\\}";
 						
 						
 						String nw  = old.replaceAll(regex, "{{"+config.getTemplate()+(newParameters.size() > 0 ? "|"+convertToTemplateProperties(newParameters) : "")+"}}");
 						if(nw.equals(old)){
-							System.out.println("** unknown error: regex doesn't match");
+							throwWarning(new NormdatenTask2Exception(a, "regex doesn't match", NormdatenTask2ExceptionLevel.PROBLEM));
 							removable = false;
 						}
 						if(nw.length() == 0){
-							System.out.println("** unknown error: error while calculating error");
+							throwWarning(new NormdatenTask2Exception(a, "error while calculating", NormdatenTask2ExceptionLevel.INTERNAL));
 							removable = false;
 						}
 						if(removable){
-							getWikipediaConnection().request(new EditRequest(a, nw, config.getSummary()));
-							System.out.println("** template replaced");
+							if(getWikipediaConnection().isTestState()){
+								throwWarning(new NormdatenTask2Exception(a, "template can only be replaced manually", NormdatenTask2ExceptionLevel.PROBLEM));
+							}
+							try{
+								getWikipediaConnection().request(new EditRequest(a, nw, config.getSummary()));
+								throwWarning(new NormdatenTask2Exception(a, "template replaced", NormdatenTask2ExceptionLevel.FINAL));
+								System.out.println("** template replaced");
+							}catch(WikimediaException e3){
+								throwWarning(new NormdatenTask2Exception(a, "edit request rejected", NormdatenTask2ExceptionLevel.PROBLEM));
+							}
 						}
 					} 
 				}catch(Exception e){
 					e.printStackTrace();
-					System.out.println("** unknown error: "+e.getClass().getCanonicalName()+" "+e.getMessage());
+					throwWarning(new NormdatenTask2Exception(a, "unknown error", e.getClass().getCanonicalName()+" "+e.getMessage(), NormdatenTask2ExceptionLevel.INTERNAL));
 					continue;
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private HashMap<NormdatenTask2Exception, Integer> stat = new HashMap<>();
+	
+	private void throwWarning(NormdatenTask2Exception e) throws Exception{
+		System.out.println("** "+e.getMessage());
+		if(stat.containsKey(e))
+			stat.put(e, stat.get(e)+1);
+		else
+			stat.put(e, 1);
+		handleError(e);
+	}
+	
+	private void throwException(NormdatenTask2Exception e) throws Exception{
+		throwWarning(e);
+		throw e;
+	}
+	
+	public Map<NormdatenTask2Exception, Integer> getStatistic() {
+		return stat;
 	}
 
 	private static String convertToTemplateProperties(Map<String,String> m){
@@ -312,4 +363,91 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 		return newidentifier;
 	}
 
+	public class NormdatenTask2Exception extends WikimediaException {
+		
+		private Article article;
+		private String type;
+		private NormdatenTask2ExceptionLevel level;
+		private String message = null;
+		
+		public NormdatenTask2Exception(Article a, String type, String message, NormdatenTask2ExceptionLevel level) {
+			super(type+ " ("+ message+") at "+a.getTitle());
+			setArticle(a);
+			this.type = type;
+			this.level = level;
+			this.message = message;
+		}
+		
+		public NormdatenTask2Exception(Article a, String type, NormdatenTask2ExceptionLevel level) {
+			super(type+ " at "+a.getTitle());
+			setArticle(a);
+			this.type = type;
+			this.level = level;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if(obj == null)
+				return false;
+			if(! (obj instanceof NormdatenTask2Exception))
+				return false;
+			NormdatenTask2Exception e = (NormdatenTask2Exception) obj;
+			return this.type.equals(e.type);
+		}
+		
+		@Override
+		public int hashCode() {
+			return type.hashCode();
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
+	
+		public Project getProject() throws MalformedURLException {
+			return NormdatenTask2.this.getWikipediaConnection().getProject();
+		}
+
+		public Article getArticle() {
+			return article;
+		}
+
+		public void setArticle(Article article) {
+			this.article = article;
+		}
+
+		public NormdatenTask2ExceptionLevel getLevel() {
+			return level;
+		}
+
+		public void setLevel(NormdatenTask2ExceptionLevel level) {
+			this.level = level;
+		}
+		
+		public String getSimpleMessage(){
+			return message;
+		}
+	}
+	
+	public enum NormdatenTask2ExceptionLevel {
+		INFO, PROBLEM, INTERNAL, EXTERNAL, FINAL
+	}
+
+	public void registerErrorHandler(NormdatenTask2ErrorHandler e){
+		handlers.add(e);
+	}
+	
+	protected void handleError(NormdatenTask2Exception e) throws Exception{
+		for(NormdatenTask2ErrorHandler eh : handlers)
+			if(eh.accept(e))
+				eh.handle(e);
+	}
+	
+	public void removeErrorHandler(NormdatenTask2ErrorHandler e){
+		handlers.remove(e);
+	}
 }

@@ -20,4 +20,14 @@ public class Property {
 	public String toString() {
 		return "P"+id;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		if(!(obj instanceof Property))
+			return false;
+		Property p = (Property) obj;
+		return id == p.id;
+	}
 }
