@@ -1,262 +1,318 @@
 {
- "ISNI": {
-  "pattern": "\\d\\d\\d\\d \\d\\d\\d\\d \\d\\d\\d\\d \\d\\d\\d[\\dX]",
-  "property": 213
- },
- "SUDOC": {
-  "pattern": "\\d{8}[\\dX]",
-  "property": 269
- },
- "BIBSYS": {
-  "pattern": "x\\d{8}",
-  "property": 1015
- },
- "GND": {
-  "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
-  "property": 227
- },
- "GKD": {
-  "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
-  "property": 227
- },
- "DNB": {
-  "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
-  "property": 227
- },
- "PND": {
-  "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
-  "property": 227
- },
- "SWD": {
-  "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
-  "property": 227
- },
- "RID": {
-  "pattern": "[A-Z]-\\d{4}-(19|20)\\d\\d",
-  "property": 1053
- },
- "NLA": {
-  "pattern": "[1-9][0-9]{0,11}",
-  "property": 409
- },
- "NDL": {
-  "pattern": "0?\\d{8}",
-  "property": 349
- },
- "BPN": {
-  "pattern": "\\d{8}",
-  "property": 651
- },
- "RKDartists": {
-  "pattern": "[1-9]\\d{0,5}",
-  "property": 650
- },
- "VIAF": {
-  "pattern": "([1-9]\\d{1,8}|)",
-  "property": 214
- },
- "VIAF-1": {
-  "pattern": "([1-9]\\d{1,8}|)",
-  "property": 214
- },
- "SELIBR": {
-  "pattern": "[1-9]\\d{0,8}",
-  "property": 906
- },
- "MBA": {
-  "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
-  "property": 434
- },
- "ORCID": {
-  "pattern": "0000-000(1-[5-9]|2-[0-9]|3-[0-4])\\d\\d\\d-\\d\\d\\d[\\dX]",
-  "property": 496
- },
- "ULAN": {
-  "pattern": "500\\d{6}",
-  "property": 245
- },
- "JPG": {
-  "pattern": "500\\d{6}",
-  "property": 245
- },
- "LCCN": {
-  "pattern": "(|n|nb|nr|no|ns|sh|sj|sn)([4-9][0-9]|00|20[0-1][0-9])[0-9]{6}",
-  "property": 244
- },
- "BNF": {
-  "pattern": "\\d{8}[0-9bcdfghjkmnpqrstvwxz]",
-  "property": 268
- },
- "MGP": {
-  "pattern": "\\d{1,6}",
-  "property": 549
- },
- "BNE": {
-  "pattern": "XX\\d{5,7}",
-  "property": 950
- },
- "CANTIC": {
-  "pattern": "a\\d{7}[0-9x]",
-  "property": 1273
- },
- "NKC": {
-  "pattern": "[a-z]{2,4}[0-9]{2,14}",
-  "property": 691
- },
- "SBN": {
-  "pattern": "IT\\\\ICCU\\\\(\\d{10}|\\D\\D[\\D\\d]\\D\\\\\\d{6})",
-  "property": 396
- },
- "PTBNP": {
-  "pattern": "[1-9][0-9]*",
-  "property": 1005
- },
- "NTA": {
-  "pattern": "[0-9]{8}[0-9X]",
-  "property": 1006
- },
- "NUKAT": {
-  "pattern": "n(9[3-9]|0[0-2]|200[2-9]|201[0-4])\\d{6}",
-  "property": 1207
- },
- "BAV": {
-  "pattern": "ADV\\d{8}",
-  "property": 1017
- },
- "BNC": {
-  "pattern": "\\d{9}",
-  "property": 1890
- },
- "NLI": {
-  "pattern": "\\d{9}",
-  "property": 949
- },
- "CINII": {
-  "pattern": "DA\\d{7}[\\dX]",
-  "property": 271
- },
- "NLP": {
-  "pattern": "A[0-9]{7}[0-9X]",
-  "property": 1695
- },
- "FIDE": {
-  "pattern": "\\d{6,8}",
-  "property": 1440
- },
- "SIKART": {
-  "pattern": "\\d{7,9}",
-  "property": 781
- },
- "TLS": {
-  "pattern": "[A-ZÅÄÖÜÉ][a-zåäâáàöóüéèëêşçA-ZÅÄÖÜÉ0-9 ',\\.\\-–()\\*/]*",
-  "property": 1362
- },
- "LIR": {
-  "pattern": ".+",
-  "property": 886
- },
- "LAC": {
-  "pattern": "\\d\\d\\d\\d[A-Z]\\d\\d\\d\\d",
-  "property": 1670
- },
- "LÉONORE": {
-  "pattern": "LH/\\d{1,4}/\\d{1,3}|19800035/\\d{1,4}/\\d{3,5}|C/0/\\d{1,2}",
-  "property": 640
- },
- "RKDARTIST": {
-  "pattern": "[1-9]\\d{0,5}",
-  "property": 650
- },
- "GEC": {
-  "pattern": "\\d{7}",
-  "property": 1296
- },
- "ISSN": {
-  "pattern": "\\d{4}\\-\\d{3}(\\d|X)",
-  "property": 236
- },
- "OCLC": {
-  "pattern": "\\d+",
-  "property": 243
- },
- "HDS": {
-  "pattern": "(500\\d\\d|[1-4]\\d{4}|[1-9]\\d{0,3}|)",
-  "property": 902
- },
- "HLS": {
-  "pattern": "(500\\d\\d|[1-4]\\d{4}|[1-9]\\d{0,3}|)",
-  "property": 902
- },
- "DHS": {
-  "pattern": "(500\\d\\d|[1-4]\\d{4}|[1-9]\\d{0,3}|)",
-  "property": 902
- },
- "DSS": {
-  "pattern": "(500\\d\\d|[1-4]\\d{4}|[1-9]\\d{0,3}|)",
-  "property": 902
- },
- "NSK": {
-  "pattern": "\\d{9}",
-  "property": 1375
- },
- 
- 
- 
- "AB": {
-  "pattern": ".+",
-  "property": 1348
- },
- "BIOLIB": {
-  "pattern": "\\d{4,6}",
-  "property": 838
- },
- "PLANTLIST": {
-  "pattern": "(kew|tro|gcc|rjp|ild){1}-{1}\\d+",
-  "property": 1070
- },
- "EOL": {
-  "pattern": "\\d+",
-  "property": 830
- },
- "BHL": {
-  "pattern": "[1-9][0-9]*",
-  "property": 687
- },
- "FISHBASE": {
-  "pattern": "[1-9][0-9]*",
-  "property": 938
- },
- "IF": {
-  "pattern": "[1-9]\\d{0,5}",
-  "property": 1391
- },
- "ITIS": {
-  "pattern": "[1-9]\\d{1,5}",
-  "property": 815
- },
- "IUCN": {
-  "pattern": ".+",
-  "property": 627
- },
- "MSW": {
-  "pattern": "1\\d{7}",
-  "property": 959
- },
- "MB": {
-  "pattern": "[1-9][0-9]*",
-  "property": 962
- },
- "NCBI": {
-  "pattern": "[1-9][0-9]*",
-  "property": 685
- },
- "PD": {
-  "pattern": "\\d+",
-  "property": 842
- },
- "WORMS": {
-  "pattern": "\\d{1,6}",
-  "property": 850
- }
- 
+     "ISNI": {
+          "formatter": "http://isni.org/$1",
+          "pattern": "\\d\\d\\d\\d \\d\\d\\d\\d \\d\\d\\d\\d \\d\\d\\d[\\dX]",
+          "property": 213
+     },
+     "MSW": {
+          "formatter": "http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id=$1",
+          "pattern": "1\\d{7}",
+          "property": 959
+     },
+     "NTA": {
+          "formatter": "http://opc4.kb.nl/PPN?PPN=$1",
+          "pattern": "[0-9]{8}[0-9X]",
+          "property": 1006
+     },
+     "HDS": {
+          "formatter": "http://www.hls-dhs-dss.ch/textes/d/D$1.php",
+          "pattern": "(500\\d\\d|[1-4]\\d{4}|[1-9]\\d{0,3}|)",
+          "property": 902
+     },
+     "TLS": {
+          "formatter": "http://tls.theaterwissenschaft.ch/wiki/$1",
+          "pattern": "[A-ZÅÄÖÜÉ][a-zåäâáàöóüéèëêşçA-ZÅÄÖÜÉ0-9 ',\\.\\-\u2013()\\*/]*",
+          "property": 1362
+     },
+     "NKC": {
+          "formatter": "http://aut.nkp.cz/$1",
+          "pattern": "[a-z]{2,4}[0-9]{2,14}",
+          "property": 691
+     },
+     "HLS": {
+          "formatter": "http://www.hls-dhs-dss.ch/textes/d/D$1.php",
+          "pattern": "(500\\d\\d|[1-4]\\d{4}|[1-9]\\d{0,3}|)",
+          "property": 902
+     },
+     "IUCN": {
+          "formatter": "http://www.iucnredlist.org/details/$1/0",
+          "pattern": ".+",
+          "property": 627
+     },
+     "JPG": {
+          "formatter": "http://vocab.getty.edu/page/ulan/$1",
+          "pattern": "500\\d{6}",
+          "property": 245
+     },
+     "WORMS": {
+          "formatter": "http://www.marinespecies.org/aphia.php?p=taxdetails&id=$1",
+          "pattern": "\\d{1,6}",
+          "property": 850
+     },
+     "VIAF-1": {
+          "formatter": "https://viaf.org/viaf/$1/",
+          "pattern": "([1-9]\\d{1,8}|)",
+          "property": 214
+     },
+     "PND": {
+          "formatter": "http://d-nb.info/gnd/$1",
+          "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
+          "property": 227
+     },
+     "NSK": {
+          "pattern": "\\d{9}",
+          "property": 1375
+     },
+     "MBA": {
+          "formatter": "https://musicbrainz.org/artist/$1",
+          "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+          "property": 434
+     },
+     "LCCN": {
+          "formatter": "http://id.loc.gov/authorities/$1",
+          "pattern": "(|n|nb|nr|no|ns|sh|sj|sn)([4-9][0-9]|00|20[0-1][0-9])[0-9]{6}",
+          "property": 244
+     },
+     "IF": {
+          "formatter": "http://www.indexfungorum.org/names/NamesRecord.asp?RecordID=$1",
+          "pattern": "[1-9]\\d{0,5}",
+          "property": 1391
+     },
+     "MB": {
+          "formatter": "http://www.mycobank.org/MycoTaxo.aspx?Link=T&Rec=$1",
+          "pattern": "[1-9][0-9]*",
+          "property": 962
+     },
+     "OCLC": {
+          "formatter": "https://www.worldcat.org/oclc/$1?lang=",
+          "pattern": "\\d+",
+          "property": 243
+     },
+     "GEC": {
+          "formatter": "http://www.enciclopedia.cat/EC-GEC-$1.xml",
+          "pattern": "\\d{7}",
+          "property": 1296
+     },
+     "SUDOC": {
+          "formatter": "http://www.idref.fr/$1",
+          "pattern": "\\d{8}[\\dX]",
+          "property": 269
+     },
+     "NCBI": {
+          "formatter": "https://www.ncbi.nlm.nih.gov/taxonomy/$1",
+          "pattern": "[1-9][0-9]*",
+          "property": 685
+     },
+     "EOL": {
+          "formatter": "http://eol.org/pages/$1",
+          "pattern": "\\d+",
+          "property": 830
+     },
+     "MGP": {
+          "formatter": "http://genealogy.math.ndsu.nodak.edu/id.php?id=$1",
+          "pattern": "\\d{1,6}",
+          "property": 549
+     },
+     "NUKAT": {
+          "pattern": "n(9[3-9]|0[0-2]|200[2-9]|201[0-4])\\d{6}",
+          "property": 1207
+     },
+     "AB": {
+          "pattern": ".+",
+          "property": 1348
+     },
+     "PTBNP": {
+          "formatter": "http://purl.pt/index/geral/aut/PT/$1.html",
+          "pattern": "[1-9][0-9]*",
+          "property": 1005
+     },
+     "ORCID": {
+          "formatter": "http://orcid.org/$1",
+          "pattern": "0000-000(1-[5-9]|2-[0-9]|3-[0-4])\\d\\d\\d-\\d\\d\\d[\\dX]",
+          "property": 496
+     },
+     "DSS": {
+          "formatter": "http://www.hls-dhs-dss.ch/textes/d/D$1.php",
+          "pattern": "(500\\d\\d|[1-4]\\d{4}|[1-9]\\d{0,3}|)",
+          "property": 902
+     },
+     "FIDE": {
+          "formatter": "https://ratings.fide.com/card.phtml?event=$1",
+          "pattern": "\\d{6,8}",
+          "property": 1440
+     },
+     "LÉONORE": {
+          "formatter": "http://www.culture.gouv.fr/public/mistral/leonore_fr?ACTION=CHERCHER&FIELD_1=COTE&VALUE_1=$1",
+          "pattern": "LH/\\d{1,4}/\\d{1,3}|19800035/\\d{1,4}/\\d{3,5}|C/0/\\d{1,2}",
+          "property": 640
+     },
+     "RKDARTIST": {
+          "formatter": "http://rkd.nl/explore/artists/$1",
+          "pattern": "[1-9]\\d{0,5}",
+          "property": 650
+     },
+     "BIBSYS": {
+          "formatter": "http://bibsys-primo.hosted.exlibrisgroup.com/primo_library/libweb/action/search.do?fn=search&ct=search&initialSearch=true&mode=Basic&vid=BIBSYS&vl%28freeText0%29=$1",
+          "pattern": "x\\d{8}",
+          "property": 1015
+     },
+     "GND": {
+          "formatter": "http://d-nb.info/gnd/$1",
+          "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
+          "property": 227
+     },
+     "ITIS": {
+          "formatter": "http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=$1",
+          "pattern": "[1-9]\\d{1,5}",
+          "property": 815
+     },
+     "RID": {
+          "formatter": "http://www.researcherid.com/rid/$1",
+          "pattern": "[A-Z]-\\d{4}-(19|20)\\d\\d",
+          "property": 1053
+     },
+     "NDL": {
+          "formatter": "http://id.ndl.go.jp/auth/ndlna/$1",
+          "pattern": "0?\\d{8}",
+          "property": 349
+     },
+     "DHS": {
+          "formatter": "http://www.hls-dhs-dss.ch/textes/d/D$1.php",
+          "pattern": "(500\\d\\d|[1-4]\\d{4}|[1-9]\\d{0,3}|)",
+          "property": 902
+     },
+     "CINII": {
+          "formatter": "http://ci.nii.ac.jp/author/$1",
+          "pattern": "DA\\d{7}[\\dX]",
+          "property": 271
+     },
+     "LIR": {
+          "formatter": "http://www.e-lir.ch/e-LIR___Lexicon.$1.450.0.html",
+          "pattern": ".+",
+          "property": 886
+     },
+     "BPN": {
+          "formatter": "http://www.biografischportaal.nl/persoon/$1",
+          "pattern": "\\d{8}",
+          "property": 651
+     },
+     "SBN": {
+          "formatter": "http://id.sbn.it/af/$1",
+          "pattern": "IT\\\\ICCU\\\\(\\d{10}|\\D\\D[\\D\\d]\\D\\\\\\d{6})",
+          "property": 396
+     },
+     "RKDartists": {
+          "formatter": "http://rkd.nl/explore/artists/$1",
+          "pattern": "[1-9]\\d{0,5}",
+          "property": 650
+     },
+     "CANTIC": {
+          "formatter": "http://cantic.bnc.cat/registres/CUCId/$1",
+          "pattern": "a\\d{7}[0-9x]",
+          "property": 1273
+     },
+     "SELIBR": {
+          "formatter": "https://libris.kb.se/auth/$1",
+          "pattern": "[1-9]\\d{0,8}",
+          "property": 906
+     },
+     "SWD": {
+          "formatter": "http://d-nb.info/gnd/$1",
+          "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
+          "property": 227
+     },
+     "BHL": {
+          "formatter": "http://biodiversitylibrary.org/page/$1",
+          "pattern": "[1-9][0-9]*",
+          "property": 687
+     },
+     "ULAN": {
+          "formatter": "http://vocab.getty.edu/page/ulan/$1",
+          "pattern": "500\\d{6}",
+          "property": 245
+     },
+     "NLI": {
+          "formatter": "https://viaf.org/processed/NLI%7C$1",
+          "pattern": "\\d{9}",
+          "property": 949
+     },
+     "LAC": {
+          "formatter": "https://www.collectionscanada.gc.ca/canadiana-authorities/index/view?index_name=cdnAutNbr&cdnAutNbr=$1&format=full",
+          "pattern": "\\d\\d\\d\\d[A-Z]\\d\\d\\d\\d",
+          "property": 1670
+     },
+     "FISHBASE": {
+          "formatter": "http://www.fishbase.org/Summary/speciesSummary.php?id=$1",
+          "pattern": "[1-9][0-9]*",
+          "property": 938
+     },
+     "NLA": {
+          "formatter": "http://nla.gov.au/anbd.aut-an$1",
+          "pattern": "[1-9][0-9]{0,11}",
+          "property": 409
+     },
+     "GKD": {
+          "formatter": "http://d-nb.info/gnd/$1",
+          "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
+          "property": 227
+     },
+     "VIAF": {
+          "formatter": "https://viaf.org/viaf/$1/",
+          "pattern": "([1-9]\\d{1,8}|)",
+          "property": 214
+     },
+     "BNC": {
+          "formatter": "http://www.bncatalogo.cl/F?func=direct&local_base=red10&doc_number=$1",
+          "pattern": "\\d{9}",
+          "property": 1890
+     },
+     "PLANTLIST": {
+          "formatter": "http://www.theplantlist.org/tpl1.1/record/$1",
+          "pattern": "(kew|tro|gcc|rjp|ild){1}-{1}\\d+",
+          "property": 1070
+     },
+     "ISSN": {
+          "formatter": "https://www.worldcat.org/search?fq=x0:jrnl&q=n2:$1",
+          "pattern": "\\d{4}\\-\\d{3}(\\d|X)",
+          "property": 236
+     },
+     "DNB": {
+          "formatter": "http://d-nb.info/gnd/$1",
+          "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
+          "property": 227
+     },
+     "PD": {
+          "formatter": "http://fossilworks.org/bridge.pl?a=taxonInfo&taxon_no=$1",
+          "pattern": "\\d+",
+          "property": 842
+     },
+     "BAV": {
+          "pattern": "ADV\\d{8}",
+          "property": 1017
+     },
+     "NLP": {
+          "formatter": "http://mak.bn.org.pl/cgi-bin/KHW/makwww.exe?BM=01&IM=03&NU=01&WI=$1",
+          "pattern": "A[0-9]{7}[0-9X]",
+          "property": 1695
+     },
+     "BIOLIB": {
+          "formatter": "http://www.biolib.cz/en/taxon/id$1",
+          "pattern": "\\d{4,6}",
+          "property": 838
+     },
+     "BNE": {
+          "formatter": "http://datos.bne.es/resource/$1",
+          "pattern": "XX\\d{5,7}",
+          "property": 950
+     },
+     "BNF": {
+          "formatter": "http://catalogue.bnf.fr/ark:/12148/cb$1",
+          "pattern": "\\d{8}[0-9bcdfghjkmnpqrstvwxz]",
+          "property": 268
+     },
+     "SIKART": {
+          "formatter": "http://www.sikart.ch/KuenstlerInnen.aspx?id=$1&lng=en",
+          "pattern": "\\d{7,9}",
+          "property": 781
+     }
 }

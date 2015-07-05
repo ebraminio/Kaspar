@@ -3,9 +3,14 @@ package mediawiki.info.wikibase;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class WikibaseDate {
+	
+	static {
+		Locale.setDefault(Locale.GERMANY);
+	}
 	
 	public final static int ONE_BILLION_YEARS = 0;
 	public final static int HUNDRET_MILLION_YEARS = 1;
