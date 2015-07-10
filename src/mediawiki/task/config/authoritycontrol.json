@@ -314,5 +314,10 @@
           "formatter": "http://www.sikart.ch/KuenstlerInnen.aspx?id=$1&lng=en",
           "pattern": "\\d{7,9}",
           "property": 781
+     },
+     "AUT": {
+          "formatter": "http://aut.nkp.cz/$1",
+          "pattern": "[a-z]{2,4}[0-9]{2,14}",
+          "property": 691
      }
 }

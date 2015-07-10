@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mediawiki.ContinuingRequest;
@@ -86,10 +87,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 			articles = getWikipediaConnection().request(config.getRequest()); 
 			System.out.println(articles.size()+" Artikel geladen");
 			
-			
-			
 			for(Article a : articles){
-				
 				System.out.println("* [["+a.getTitle()+"]] "+new Date().toGMTString());
 				try{
 					
@@ -124,6 +122,12 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 						
 					boolean removable = true;
 					HashMap<String,String> newParameters = new HashMap<>();
+					
+					if(t.containsKey("WORLDCAT") && ! t.containsKey("WORLDCATID")) {
+						t.put("WORLDCATID", t.get("WORLDCAT"));
+						t.remove("WORLDCAT");
+					}
+					
 					for(Entry<String, String> e : t.entrySet()){
 						if(		e.getKey().equalsIgnoreCase("TYP") ||
 								e.getKey().equalsIgnoreCase("TYPE") ||
@@ -141,6 +145,70 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							continue;
 						if(e.getKey().equalsIgnoreCase("1") && e.getValue().trim().length() == 0)
 							continue;
+						if(e.getKey().equalsIgnoreCase("WORLDCATID") && e.getValue().trim().length() > 0) {
+							if(! reachable(new URL("http://www.worldcat.org/identities/"+URLEncoder.encode(e.getValue(),"UTF-8")))) {
+								newParameters.remove(e.getKey());
+								System.out.println("** 404 Error for "+e.getKey()+" value "+e.getValue()+". ready for removal");
+								continue;
+							}
+							if(e.getValue().matches("^lccn-.*")){
+								String lccn = null;
+								if(t.containsKey("LCCN"))
+									lccn = t.get("LCCN");
+								else{
+									List<Statement> l = getWikidataConnection().request(new GetSpecificStatementRequest(base, new Property(ac.getJSONObject("LCCN").getInt("property"))));
+									if(l.size() > 0)
+										lccn = (String) l.get(0).getClaim().getSnak().getValue();
+								}
+								if(lccn == null && e.getValue().matches("^lccn-.*$")){
+									String value = e.getValue().replaceAll("^lccn-", "");
+									if(! value.matches(ac.getJSONObject("LCCN").getString("pattern"))){
+										value = value.replaceAll("\\-", "/");
+										value = value.replaceAll("^(|n|nb|nr|no|ns|sh|sj|sn)(.*)$", "$1/$2");
+										value = WikimediaUtil.formatLCCN(value);
+									}
+									if(value != null && value.matches(ac.getJSONObject("LCCN").getString("pattern")) ) {
+										Statement s = getConnection().request(new CreateClaimRequest(base, new Claim(ac.getJSONObject("LCCN").getInt("property"), new StringSnak(value))));
+										if(s == null){
+											throwWarning(new NormdatenTask2Exception(a, "unable to add claim",e.getKey(), NormdatenTask2ExceptionLevel.INTERNAL));
+											removable = false;
+											newParameters.put(e.getKey(),e.getValue());
+											continue;
+										}else{
+											getConnection().request(new SetReferenceRequest(s, config.getReference()));
+											System.out.println("** added claim for "+e.getKey());
+											continue;
+										}
+									}else{
+										newParameters.put(e.getKey(),e.getValue());
+										continue;
+									}
+								}else{
+									String[] lccns = WikimediaUtil.splitLCCN(lccn);
+									if(! reachable(new URL("http://www.worldcat.org/identities/lccn-"+URLEncoder.encode(lccns[0]+"-"+lccns[1]+"-"+lccns[2], "UTF-8")))) {
+										newParameters.remove(e.getKey());
+										System.out.println("** 404 Error for "+e.getKey()+" value "+lccns[0]+"-"+lccns[1]+"-"+lccns[2]+". ready for removal");
+										continue;
+									}
+									for(int i = 0; i < lccns.length; i++) 
+										lccns[i] = lccns[i].replaceAll("^0+(\\d+)$", "$1");
+									if(e.getValue().matches("^lccn-"+Matcher.quoteReplacement(lccns[0])+"\\-?0*"+Matcher.quoteReplacement(lccns[1])+"\\-?0*"+Matcher.quoteReplacement(lccns[2])+"$" )) {
+										newParameters.remove(e.getKey());
+										System.out.println("** WORLDCATID equals suggested value. ready for removal");
+										continue;
+									}else{
+										throwWarning(new NormdatenTask2Exception(a, "different value on wikidata", e.getKey()+": "+e.getValue()+"!=lccn-"+lccns[0]+"-"+lccns[1]+"-"+lccns[2], NormdatenTask2ExceptionLevel.PROBLEM));
+										newParameters.put(e.getKey(),e.getValue());
+										continue;
+									}
+								}
+							}else{
+								throwWarning(new NormdatenTask2Exception(a, "WORLDCATID not based on LCCN", NormdatenTask2ExceptionLevel.PROBLEM));
+								newParameters.put(e.getKey(),e.getValue());
+								removable = false;
+								continue;
+							}
+						}
 						if(! ac.has(e.getKey()) && (e.getValue().trim().length() > 0 || (config.isKeepEmpty() && e.getValue().trim().length() == 0) ) ){
 							throwWarning(new NormdatenTask2Exception(a, "unknown template property", e.getKey(), NormdatenTask2ExceptionLevel.PROBLEM));
 							newParameters.put(e.getKey(),e.getValue());
@@ -202,7 +270,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 								if(l.size() == 0){
 									Statement s = getConnection().request(new CreateClaimRequest(base, new Claim(ac.getJSONObject(e.getKey()).getInt("property"), new StringSnak(value))));
 									if(s == null){
-										throwWarning(new NormdatenTask2Exception(a, "unable to add claim for "+e.getKey(), NormdatenTask2ExceptionLevel.INTERNAL));
+										throwWarning(new NormdatenTask2Exception(a, "unable to add claim", e.getKey(), NormdatenTask2ExceptionLevel.INTERNAL));
 										removable = false;
 										newParameters.put(e.getKey(),e.getValue());
 										if(e.getKey().equalsIgnoreCase("PLANTLIST") && t.containsKey("PREFIX")){newParameters.put("PREFIX", t.get("PREFIX"));}

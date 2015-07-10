@@ -24,6 +24,14 @@ public class WikimediaUtil {
 		return flccn;
 	}
 	
+	public static String[] splitLCCN(String lccn) {
+		if(lccn.matches("^(|n|nb|nr|no|ns|sh|sj|sn)(\\d+)(\\d{6})$"))
+	        return lccn.replaceAll("^(|n|nb|nr|no|ns|sh|sj|sn)(\\d+)(\\d{6})$", "$1/$2/$3").split("\\/");
+	    if(lccn.matches("^(|n|nb|nr|no|ns|sh|sj|sn)\\/\\d{2,4}\\/\\d+$"))
+	    	return lccn.split("\\/");
+	    return null;
+	}
+	
 	public static Statement addTrustedStatement(WikimediaConnection wikidata, String base, Claim c, Reference ref) throws Exception {
 		ArrayList<Statement> s = wikidata.request(new GetSpecificStatementRequest(base, c.getProperty()));
 		if(s.size() == 0) {

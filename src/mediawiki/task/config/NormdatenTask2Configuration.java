@@ -68,7 +68,7 @@ public class NormdatenTask2Configuration {
 			"Normdaten","Authority control"
 			);
 	public static final NormdatenTask2Configuration HUWIKI = new NormdatenTask2Configuration(
-			new CategoryMemberRequest("Kategória:Tesztelés alatt álló sablon",0),
+			new TemplateEmbeddedInRequest("Sablon:Nemzetközi katalógusok", 0),
 			new Reference(new Property(143), new ItemSnak(53464)),
 			"Nemzetközi katalógusok","Normdaten","Authority control"
 			);
@@ -76,6 +76,31 @@ public class NormdatenTask2Configuration {
 			new CategoryMemberRequest("분류:매개 변수를 가진 전거 통제 틀을 사용하는 문서",0),
 			new Reference(new Property(143), new ItemSnak(17985)),
 			"Authority control","전거 정보","전거 통제","전거 제어","Normdaten"
+			);
+	public static final NormdatenTask2Configuration ELWIKI = new NormdatenTask2Configuration(
+			new TemplateEmbeddedInRequest("Πρότυπο:Authority control", 0),
+			new Reference(new Property(143), new ItemSnak(11918)),
+			"Authority control"
+			);
+	public static final NormdatenTask2Configuration BEWIKI = new NormdatenTask2Configuration(
+			new TemplateEmbeddedInRequest("Шаблон:Вонкавыя спасылкі", 0),
+			new Reference(new Property(143), new ItemSnak(877583)),
+			"бібліяінфармацыя","Вонкавыя спасылкі","Нарматыўны кантроль","Authority control","Normdaten"
+			);
+	public static final NormdatenTask2Configuration CSWIKI = new NormdatenTask2Configuration(
+			new TemplateEmbeddedInRequest("Šablona:Autoritní data", 0),
+			new Reference(new Property(143), new ItemSnak(191168)),
+			"Autoritní data"
+			);
+	public static final NormdatenTask2Configuration FAWIKI = new NormdatenTask2Configuration(
+			new TemplateEmbeddedInRequest("الگو:داده‌های کتابخانه‌ای", 0),
+			new Reference(new Property(143), new ItemSnak(48952)),
+			"مستند کردن","Authority control","Normdaten"
+			);
+	public static final NormdatenTask2Configuration SVWIKI = new NormdatenTask2Configuration(
+			new TemplateEmbeddedInRequest("Mall:Auktoritetsdata", 0),
+			new Reference(new Property(143), new ItemSnak(169514)),
+			"Auktoritetsdata","Katalogreferenser"
 			);
 	
 	public static final NormdatenTask2Configuration CAWIKI_TAXON = new NormdatenTask2Configuration(
