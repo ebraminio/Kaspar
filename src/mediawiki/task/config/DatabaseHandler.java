@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 import mediawiki.task.NormdatenTask2.NormdatenTask2Exception;
+import mediawiki.task.NormdatenTask2.NormdatenTask2ExceptionLevel;
 
 public class DatabaseHandler implements NormdatenTask2ErrorHandler {
 
@@ -19,16 +20,18 @@ public class DatabaseHandler implements NormdatenTask2ErrorHandler {
 	
 	@Override
 	public void handle(NormdatenTask2Exception e) throws Exception {
-		PreparedStatement s = connection.prepareStatement("INSERT INTO problems (article, typ, message, run) VALUES (?,?,?,?)");
-		s.setString(1, e.getArticle().getTitle());
-		s.setString(2, e.getType());
-		s.setString(3, e.getSimpleMessage());
-		s.setInt(4, getRunID());
+		if(e.getLevel() != NormdatenTask2ExceptionLevel.FINAL) {
+			PreparedStatement s = connection.prepareStatement("INSERT INTO problems (article, typ, message, run) VALUES (?,?,?,?)");
+			s.setString(1, e.getArticle().getTitle());
+			s.setString(2, e.getType());
+			s.setString(3, e.getSimpleMessage());
+			s.setInt(4, getRunID());
+			
+			s.executeUpdate();
+			s.closeOnCompletion();
+		}
 		
-		s.executeUpdate();
-		s.closeOnCompletion();
-		
-		s = connection.prepareStatement("DELETE FROM problems WHERE article = ? AND `timestamp` < NOW() AND run != ? AND (SELECT project FROM tasks WHERE tasks.ID = (SELECT task FROM runs WHERE runs.ID = problems.run)) = (SELECT project FROM tasks WHERE tasks.ID = (SELECT task FROM runs WHERE runs.ID = ?))");
+		PreparedStatement s = connection.prepareStatement("DELETE FROM problems WHERE article = ? AND `timestamp` < NOW() AND run != ? AND (SELECT project FROM tasks WHERE tasks.ID = (SELECT task FROM runs WHERE runs.ID = problems.run)) = (SELECT project FROM tasks WHERE tasks.ID = (SELECT task FROM runs WHERE runs.ID = ?))");
 		s.setString(1, e.getArticle().getTitle());
 		s.setInt(2, getRunID());
 		s.setInt(3, getRunID());
@@ -40,9 +43,9 @@ public class DatabaseHandler implements NormdatenTask2ErrorHandler {
 	public boolean accept(NormdatenTask2Exception e) {
 		switch(e.getLevel()){
 		case INFO:
-		case FINAL:
+		
 			return false;
-			
+		case FINAL:
 		case EXTERNAL:
 		case PROBLEM:
 		case INTERNAL:

@@ -146,7 +146,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 						if(e.getKey().equalsIgnoreCase("1") && e.getValue().trim().length() == 0)
 							continue;
 						if(e.getKey().equalsIgnoreCase("WORLDCATID") && e.getValue().trim().length() > 0) {
-							if(! reachable(new URL("http://www.worldcat.org/identities/"+URLEncoder.encode(e.getValue(),"UTF-8")))) {
+							if(! reachable(new URL("http://www.worldcat.org/identities/"+URLEncoder.encode(e.getValue().replaceAll("\\/",""),"UTF-8")))) {
 								newParameters.remove(e.getKey());
 								System.out.println("** 404 Error for "+e.getKey()+" value "+e.getValue()+". ready for removal");
 								continue;
