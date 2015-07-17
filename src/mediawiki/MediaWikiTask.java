@@ -7,11 +7,11 @@ import mediawiki.event.CompletedListener;
 import mediawiki.event.ProgressChangeEvent;
 import mediawiki.event.ProgressChangeListener;
 
-public abstract class WikimediaTask implements Runnable {
+public abstract class MediaWikiTask implements Runnable {
 
 	private int togo = 0;
 	private int done = 0;
-	private ArrayList<ProgressChangeListener<WikimediaTask,Double>> listeners = new ArrayList<>();
+	private ArrayList<ProgressChangeListener<MediaWikiTask,Double>> listeners = new ArrayList<>();
 	private ArrayList<CompletedListener> listeners2 =new ArrayList<>();
 	
 	private long t1 = 0;
@@ -19,13 +19,13 @@ public abstract class WikimediaTask implements Runnable {
 	
 	private boolean stopped = false;
 	
-	private WikimediaConnection connection;
+	private MediaWikiConnection connection;
 	
-	public WikimediaTask(WikimediaConnection con){
+	public MediaWikiTask(MediaWikiConnection con){
 		connection = con;
 	}
 	
-	public WikimediaConnection getConnection() {
+	public MediaWikiConnection getConnection() {
 		return connection;
 	}
 
@@ -40,12 +40,12 @@ public abstract class WikimediaTask implements Runnable {
 
 	protected void setTogo(int togo) {
 		this.togo = togo;
-		fireProgressChangeEvent(new ProgressChangeEvent<WikimediaTask, Double>(this, getProgress()));
+		fireProgressChangeEvent(new ProgressChangeEvent<MediaWikiTask, Double>(this, getProgress()));
 	}
 
 	protected void setDone(int done) {
 		this.done = done;
-		fireProgressChangeEvent(new ProgressChangeEvent<WikimediaTask, Double>(this, getProgress()));
+		fireProgressChangeEvent(new ProgressChangeEvent<MediaWikiTask, Double>(this, getProgress()));
 	}
 	
 	public double getProgress(){
@@ -58,11 +58,11 @@ public abstract class WikimediaTask implements Runnable {
 		setDone(getDone()+1);
 	}
 
-	public void addProgressChangeListener(ProgressChangeListener<WikimediaTask,Double> listener){
+	public void addProgressChangeListener(ProgressChangeListener<MediaWikiTask,Double> listener){
 		listeners.add(listener);
 	}
 	
-	protected void fireProgressChangeEvent(ProgressChangeEvent<WikimediaTask,Double> e){
+	protected void fireProgressChangeEvent(ProgressChangeEvent<MediaWikiTask,Double> e){
 		for(ProgressChangeListener l : listeners)
 			l.progressChanged(e);
 	}

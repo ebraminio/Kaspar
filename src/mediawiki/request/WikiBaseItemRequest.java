@@ -2,13 +2,13 @@ package mediawiki.request;
 
 import javat.xml.Document;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.Article;
 
 
-public class WikiBaseItemRequest extends WikimediaRequest<String> {
+public class WikiBaseItemRequest extends MediaWikiRequest<String> {
 
 	public WikiBaseItemRequest(Article a) {
 		setProperty("pageids", a.getPageid());
@@ -23,8 +23,8 @@ public class WikiBaseItemRequest extends WikimediaRequest<String> {
 	}
 
 	@Override
-	public String request(WikimediaConnection c) throws Exception {
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+	public String request(MediaWikiConnection c) throws Exception {
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "query");
 		p.putData("prop", "pageprops");

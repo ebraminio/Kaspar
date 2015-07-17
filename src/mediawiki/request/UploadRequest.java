@@ -5,11 +5,11 @@ import java.net.URL;
 
 import org.apache.http.entity.mime.content.InputStreamBody;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 
-public class UploadRequest extends WikimediaRequest<Object> implements
+public class UploadRequest extends MediaWikiRequest<Object> implements
 		ManipulativeRequest {
 
 	
@@ -28,9 +28,9 @@ public class UploadRequest extends WikimediaRequest<Object> implements
 	
 	
 	@Override
-	public Object request(WikimediaConnection c) throws Exception {
+	public Object request(MediaWikiConnection c) throws Exception {
 		String token = c.request(new TokenRequest());
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "upload");
 		p.putData("token", token);

@@ -5,12 +5,12 @@ import java.util.ArrayList;
 
 import javat.xml.Document;
 import javat.xml.Element;
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.wikibase.TranslatedContent;
 
-public class GetAliasesRequest extends WikimediaRequest<TranslatedContent<ArrayList<String>>> {
+public class GetAliasesRequest extends MediaWikiRequest<TranslatedContent<ArrayList<String>>> {
 
 	public GetAliasesRequest(String base, String...languages){
 		setProperty("ids", base);
@@ -24,8 +24,8 @@ public class GetAliasesRequest extends WikimediaRequest<TranslatedContent<ArrayL
 	}
 	
 	@Override
-	public TranslatedContent<ArrayList<String>> request(WikimediaConnection c) throws Exception {
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+	public TranslatedContent<ArrayList<String>> request(MediaWikiConnection c) throws Exception {
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "wbgetentities");
 		p.putData("props", "aliases");

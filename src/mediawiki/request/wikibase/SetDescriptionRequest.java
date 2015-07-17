@@ -1,13 +1,13 @@
 package mediawiki.request.wikibase;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.request.ManipulativeRequest;
 import mediawiki.request.TokenRequest;
 
 
-public class SetDescriptionRequest extends WikimediaRequest implements ManipulativeRequest {
+public class SetDescriptionRequest extends MediaWikiRequest implements ManipulativeRequest {
 
 	public SetDescriptionRequest(String entity, String language, String description ){
 		this(entity,language,description,"");
@@ -21,9 +21,9 @@ public class SetDescriptionRequest extends WikimediaRequest implements Manipulat
 	}
 	
 	@Override
-	public Object request(WikimediaConnection c) throws Exception {
+	public Object request(MediaWikiConnection c) throws Exception {
 		String token = c.request(new TokenRequest());
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "wbsetdescription");
 		p.putData("token", token);

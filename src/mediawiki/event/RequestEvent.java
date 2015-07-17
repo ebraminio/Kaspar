@@ -1,16 +1,16 @@
 package mediawiki.event;
 
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiRequest;
 
 public class RequestEvent {
 
-	private WikimediaRequest<?> request;
+	private MediaWikiRequest<?> request;
 	
-	public RequestEvent(WikimediaRequest<?> r){
+	public RequestEvent(MediaWikiRequest<?> r){
 		request = r;
 	}
 
-	public WikimediaRequest<?> getRequest() {
+	public MediaWikiRequest<?> getRequest() {
 		return request;
 	}
 

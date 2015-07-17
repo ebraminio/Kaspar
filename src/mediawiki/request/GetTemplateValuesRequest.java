@@ -2,12 +2,12 @@ package mediawiki.request;
 
 import java.util.Map;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.Article;
 
 @Deprecated
-public class GetTemplateValuesRequest extends WikimediaRequest<Map<String, String>> {
+public class GetTemplateValuesRequest extends MediaWikiRequest<Map<String, String>> {
 
 	private String title;
 	private String template;
@@ -24,7 +24,7 @@ public class GetTemplateValuesRequest extends WikimediaRequest<Map<String, Strin
 	}
 	
 	@Override @Deprecated
-	public Map<String, String> request(WikimediaConnection c) throws Exception {
+	public Map<String, String> request(MediaWikiConnection c) throws Exception {
 		
 		return c.request(new GetTemplatesValuesRequest(title, template)).get(0);
 		

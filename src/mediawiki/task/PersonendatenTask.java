@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import mediawiki.ArticleDenier;
-import mediawiki.WikimediaConnection;
+import mediawiki.MediaWikiConnection;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
@@ -35,7 +35,7 @@ public class PersonendatenTask extends WikipediaWikidataTask {
 	private Reference ref;
 	private ArticleDenier denier;
 	
-	public PersonendatenTask(WikimediaConnection con, WikimediaConnection wikipedia, String kat, Claim...claims) {
+	public PersonendatenTask(MediaWikiConnection con, MediaWikiConnection wikipedia, String kat, Claim...claims) {
 		super(con,wikipedia);
 		this.kat = kat;
 		this.claims = claims;

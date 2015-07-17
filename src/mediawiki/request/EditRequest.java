@@ -2,13 +2,13 @@ package mediawiki.request;
 
 import javat.xml.Document;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.Article;
 
 
-public class EditRequest extends WikimediaRequest<String> implements ManipulativeRequest {
+public class EditRequest extends MediaWikiRequest<String> implements ManipulativeRequest {
 
 	public EditRequest(Article a, String text, String summary) {
 		setProperty("pageid", a.getPageid());
@@ -26,9 +26,9 @@ public class EditRequest extends WikimediaRequest<String> implements Manipulativ
 	
 
 	@Override
-	public String request(WikimediaConnection c) throws Exception {
+	public String request(MediaWikiConnection c) throws Exception {
 		String token =  c.request(new TokenRequest());
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "edit");
 		p.putData("token", token);

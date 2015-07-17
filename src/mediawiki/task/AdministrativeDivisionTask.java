@@ -5,13 +5,13 @@ import java.util.List;
 
 import main.GNDLoad;
 import mediawiki.WikidataQuery;
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaTask;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiTask;
 import mediawiki.info.wikibase.Claim;
 
-public class AdministrativeDivisionTask extends WikimediaTask {
+public class AdministrativeDivisionTask extends MediaWikiTask {
 
-	public AdministrativeDivisionTask(WikimediaConnection con) {
+	public AdministrativeDivisionTask(MediaWikiConnection con) {
 		super(con);
 	}
 

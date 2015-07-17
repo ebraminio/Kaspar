@@ -5,16 +5,16 @@ import java.util.ArrayList;
 import javat.xml.Document;
 import javat.xml.Element;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
 import mediawiki.info.wikibase.Snak;
 import mediawiki.info.wikibase.Statement;
 
 
-public class GetSpecificStatementRequest extends WikimediaRequest<ArrayList<Statement>> {
+public class GetSpecificStatementRequest extends MediaWikiRequest<ArrayList<Statement>> {
 
 	private Snak<?> entity = null;
 	
@@ -30,8 +30,8 @@ public class GetSpecificStatementRequest extends WikimediaRequest<ArrayList<Stat
 	
 	
 	@Override
-	public ArrayList<Statement> request(WikimediaConnection c) throws Exception {
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+	public ArrayList<Statement> request(MediaWikiConnection c) throws Exception {
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "wbgetclaims");
 		Document d = p.requestDocument();

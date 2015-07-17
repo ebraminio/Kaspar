@@ -10,7 +10,7 @@ import mediawiki.request.wikibase.CreateClaimRequest;
 import mediawiki.request.wikibase.GetSpecificStatementRequest;
 import mediawiki.request.wikibase.SetReferenceRequest;
 
-public class WikimediaUtil {
+public class MediaWikiUtil {
 
 	public static String formatLCCN(String lccn){
 		String[] parts = lccn.split("\\/");
@@ -32,7 +32,7 @@ public class WikimediaUtil {
 	    return null;
 	}
 	
-	public static Statement addTrustedStatement(WikimediaConnection wikidata, String base, Claim c, Reference ref) throws Exception {
+	public static Statement addTrustedStatement(MediaWikiConnection wikidata, String base, Claim c, Reference ref) throws Exception {
 		ArrayList<Statement> s = wikidata.request(new GetSpecificStatementRequest(base, c.getProperty()));
 		if(s.size() == 0) {
 			Statement s1 = wikidata.request(new CreateClaimRequest(base, c));

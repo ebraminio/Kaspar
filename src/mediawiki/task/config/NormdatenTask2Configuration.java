@@ -2,7 +2,7 @@ package mediawiki.task.config;
 
 import java.util.List;
 
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Property;
 import mediawiki.info.wikibase.Reference;
@@ -114,16 +114,17 @@ public class NormdatenTask2Configuration {
 		CAWIKI.setKeepEmpty(true);
 		FRWIKI.setSummary("Les valeurs des paramètres de {{Autorité}} ont été transférées vers Wikidata");
 		FRWIKI2.setSummary("Les valeurs des paramètres de {{Autorité}} ont été transférées vers Wikidata");
+		HUWIKI.setSummary("nemzetközi katalógusok a Wikidatából");
 	}
 	
 	
-	public NormdatenTask2Configuration(WikimediaRequest<List<Article>> r, Reference ref, String...t) {
+	public NormdatenTask2Configuration(MediaWikiRequest<List<Article>> r, Reference ref, String...t) {
 		this.request = r;
 		this.template = t;
 		this.reference = ref;
 	}
 	
-	private WikimediaRequest<List<Article>> request;
+	private MediaWikiRequest<List<Article>> request;
 	private String[] template;
 	private Reference reference;
 	private boolean keepEmpty = false;
@@ -131,7 +132,7 @@ public class NormdatenTask2Configuration {
 	private String summary = null;
 	
 	
-	public WikimediaRequest<List<Article>> getRequest() {
+	public MediaWikiRequest<List<Article>> getRequest() {
 		return request;
 	}
 
@@ -143,7 +144,7 @@ public class NormdatenTask2Configuration {
 		return template;
 	}
 
-	public void setRequest(WikimediaRequest<List<Article>> request) {
+	public void setRequest(MediaWikiRequest<List<Article>> request) {
 		this.request = request;
 	}
 
@@ -177,7 +178,7 @@ public class NormdatenTask2Configuration {
 
 	
 	public String getSummary() {
-		return summary == null ? getTemplate()+" moved to wikidata" : summary;
+		return summary == null ? getTemplate()+" moved to Wikidata" : summary;
 	}
 	
 

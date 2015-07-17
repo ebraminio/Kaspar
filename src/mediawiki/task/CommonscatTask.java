@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import main.GNDLoad;
-import mediawiki.WikimediaConnection;
+import mediawiki.MediaWikiConnection;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
@@ -17,8 +17,8 @@ import mediawiki.request.WikiBaseItemRequest;
 
 public class CommonscatTask extends WikipediaWikidataTask {
 
-	public CommonscatTask(WikimediaConnection wikidata,
-			WikimediaConnection wikipedia) {
+	public CommonscatTask(MediaWikiConnection wikidata,
+			MediaWikiConnection wikipedia) {
 		super(wikidata, wikipedia);
 	}
 

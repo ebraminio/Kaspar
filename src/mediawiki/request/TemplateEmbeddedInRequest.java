@@ -11,8 +11,12 @@ public class TemplateEmbeddedInRequest extends ContinuingRequest<Article> {
 
 	
 	public TemplateEmbeddedInRequest(String template, int namespace){
-		super("embeddedin", "ei", "ei");
+		this(template);
 		setProperty("einamespace", namespace);
+	}
+	
+	public TemplateEmbeddedInRequest(String template) {
+		super("embeddedin", "ei", "ei");
 		setProperty("eititle", template);
 		setProperty("eilimit", 5000+"");
 	}

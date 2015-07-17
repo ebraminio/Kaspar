@@ -2,9 +2,9 @@ package mediawiki.request.wikibase;
 
 import javat.xml.Document;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
 import mediawiki.info.wikibase.Snak;
@@ -15,7 +15,7 @@ import mediawiki.request.TokenRequest;
 import org.json.JSONException;
 
 
-public class CreateClaimRequest extends WikimediaRequest<Statement>  implements ManipulativeRequest{
+public class CreateClaimRequest extends MediaWikiRequest<Statement>  implements ManipulativeRequest{
 
 	public CreateClaimRequest(String entity, Property prop, Snak<?> value) throws JSONException {
 		setProperty("entity", entity);
@@ -31,9 +31,9 @@ public class CreateClaimRequest extends WikimediaRequest<Statement>  implements 
 	
 
 	@Override
-	public Statement request(WikimediaConnection c) throws Exception {
+	public Statement request(MediaWikiConnection c) throws Exception {
 		String token = (String) c.request(new TokenRequest("csrf"));
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "wbcreateclaim");
 		p.putData("token", token);

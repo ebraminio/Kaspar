@@ -9,11 +9,11 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.content.AbstractContentBody;
 import org.apache.http.entity.mime.content.StringBody;
 
-abstract public class WikimediaRequest<T extends Object> {
+abstract public class MediaWikiRequest<T extends Object> {
 
 	private HashMap<String, AbstractContentBody> data = new HashMap<>();
 	
-	abstract public T request(WikimediaConnection c) throws Exception;
+	abstract public T request(MediaWikiConnection c) throws Exception;
 
 	public void setProperty(String k, Object v){
 		setProperty(k, v.toString());
@@ -30,5 +30,6 @@ abstract public class WikimediaRequest<T extends Object> {
 	public Map<String, AbstractContentBody> getProperties(){
 		return data;
 	}
+
 
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import org.json.JSONException;
 
 import mediawiki.WikidataQuery;
-import mediawiki.WikimediaConnection;
+import mediawiki.MediaWikiConnection;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Sitelink;
 import mediawiki.request.ArticleForNameRequest;
@@ -15,16 +15,16 @@ import mediawiki.request.wikibase.GetSitelinkRequest;
 public class WikidataQuerySelector implements ACtWPSelector {
 
 	private WikidataQuery wdq;
-	private WikimediaConnection wikidata;
-	private WikimediaConnection wikipedia;
+	private MediaWikiConnection wikidata;
+	private MediaWikiConnection wikipedia;
 	
-	public WikidataQuerySelector(WikidataQuery wdq, WikimediaConnection wikidata, WikimediaConnection wikipedia){
+	public WikidataQuerySelector(WikidataQuery wdq, MediaWikiConnection wikidata, MediaWikiConnection wikipedia){
 		this.wdq = wdq;
 		this.wikidata = wikidata;
 		this.wikipedia = wikipedia;
 	}
 	
-	public WikidataQuerySelector(String query, WikimediaConnection wikidata, WikimediaConnection wikipedia) {
+	public WikidataQuerySelector(String query, MediaWikiConnection wikidata, MediaWikiConnection wikipedia) {
 		this(new WikidataQuery(query), wikidata, wikipedia);
 	}
 	
@@ -35,7 +35,7 @@ public class WikidataQuerySelector implements ACtWPSelector {
 	private List<Integer> entities = null;
 	
 	@Override
-	public void prepare(WikimediaConnection wikidata, WikimediaConnection wikipedia) {
+	public void prepare(MediaWikiConnection wikidata, MediaWikiConnection wikipedia) {
 		this.wikidata = wikidata;
 		this.wikipedia = wikipedia;
 	}

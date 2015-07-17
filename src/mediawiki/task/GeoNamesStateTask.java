@@ -7,8 +7,8 @@ import datasets.in.GeoNames;
 
 import main.GNDLoad;
 import mediawiki.WikidataQuery;
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaTask;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiTask;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
 import mediawiki.info.wikibase.Reference;
@@ -18,9 +18,9 @@ import mediawiki.info.wikibase.snaks.DateSnak;
 import mediawiki.info.wikibase.snaks.ItemSnak;
 import mediawiki.request.wikibase.GetSpecificStatementRequest;
 
-public class GeoNamesStateTask extends WikimediaTask {
+public class GeoNamesStateTask extends MediaWikiTask {
 
-	public GeoNamesStateTask(WikimediaConnection con) {
+	public GeoNamesStateTask(MediaWikiConnection con) {
 		super(con);
 	}
 	

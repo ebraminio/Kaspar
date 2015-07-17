@@ -9,8 +9,8 @@ import javat.xml.Element;
 import datasets.in.GND;
 
 import mediawiki.WikidataQuery;
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaTask;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiTask;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
 import mediawiki.info.wikibase.Reference;
@@ -21,9 +21,9 @@ import mediawiki.info.wikibase.snaks.ItemSnak;
 import mediawiki.request.wikibase.GetSpecificStatementRequest;
 import mediawiki.request.wikibase.SetReferenceRequest;
 
-public class GNDReferencingTask extends WikimediaTask{
+public class GNDReferencingTask extends MediaWikiTask{
 
-	public GNDReferencingTask(WikimediaConnection con) {
+	public GNDReferencingTask(MediaWikiConnection con) {
 		super(con);
 	}
 

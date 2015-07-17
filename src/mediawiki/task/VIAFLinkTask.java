@@ -10,8 +10,8 @@ import org.json.JSONObject;
 
 import datasets.in.VIAF;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaTask;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiTask;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
 import mediawiki.info.wikibase.Reference;
@@ -23,14 +23,14 @@ import mediawiki.request.wikibase.GetSpecificStatementRequest;
 
 import static main.GNDLoad.addClaim;
 
-public class VIAFLinkTask extends WikimediaTask {
+public class VIAFLinkTask extends MediaWikiTask {
 
 	private Connection connect;
 	
 	private final int version = 1;
 	private final String summary = "adding %s identifier %s based on VIAF";
 	
-	public VIAFLinkTask(WikimediaConnection con, Connection connect) {
+	public VIAFLinkTask(MediaWikiConnection con, Connection connect) {
 		super(con);
 		this.connect = connect;
 	}

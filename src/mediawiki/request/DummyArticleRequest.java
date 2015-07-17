@@ -3,11 +3,11 @@ package mediawiki.request;
 import java.util.ArrayList;
 import java.util.List;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.Article;
 
-public class DummyArticleRequest extends WikimediaRequest<List<Article>> {
+public class DummyArticleRequest extends MediaWikiRequest<List<Article>> {
 
 	private List<Article> l = new ArrayList<>();
 	
@@ -17,7 +17,7 @@ public class DummyArticleRequest extends WikimediaRequest<List<Article>> {
 	}
 	
 	@Override
-	public List<Article> request(WikimediaConnection c) throws Exception {
+	public List<Article> request(MediaWikiConnection c) throws Exception {
 		return l;
 	}
 

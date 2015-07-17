@@ -1,12 +1,12 @@
 package mediawiki.request.wikibase;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.request.ManipulativeRequest;
 import mediawiki.request.TokenRequest;
 
-public class ModifierAliasesRequest extends WikimediaRequest implements ManipulativeRequest{
+public class ModifierAliasesRequest extends MediaWikiRequest implements ManipulativeRequest{
 
 	public ModifierAliasesRequest(String base, String method, String language, String...aliases){
 		this(base, method, language, "", aliases);
@@ -33,9 +33,9 @@ public class ModifierAliasesRequest extends WikimediaRequest implements Manipula
 	}
 	
 	@Override
-	public Object request(WikimediaConnection c) throws Exception {
+	public Object request(MediaWikiConnection c) throws Exception {
 		String token = (String) c.request(new TokenRequest());
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "wbsetaliases");
 		p.putData("token", token);

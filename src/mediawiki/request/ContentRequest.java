@@ -3,13 +3,13 @@ package mediawiki.request;
 import javat.xml.Document;
 import javat.xml.Element;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.Article;
 
 
-public class ContentRequest extends WikimediaRequest<String> {
+public class ContentRequest extends MediaWikiRequest<String> {
 
 	public ContentRequest(String titles) {
 		setProperty("titles",titles);
@@ -20,8 +20,8 @@ public class ContentRequest extends WikimediaRequest<String> {
 	}
 
 	@Override
-	public String request(WikimediaConnection c) throws Exception {
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+	public String request(MediaWikiConnection c) throws Exception {
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "query");
 		p.putData("prop", "revisions");

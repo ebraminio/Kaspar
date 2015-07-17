@@ -2,12 +2,12 @@ package mediawiki.request.wikibase;
 
 import java.util.ArrayList;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.Project;
 import mediawiki.info.wikibase.Sitelink;
 
-public class GetSitelinkRequest extends WikimediaRequest<Sitelink> {
+public class GetSitelinkRequest extends MediaWikiRequest<Sitelink> {
 	
 	private GetSitelinksRequest r;
 
@@ -22,7 +22,7 @@ public class GetSitelinkRequest extends WikimediaRequest<Sitelink> {
 	
 	@Override
 	public Sitelink request(
-			WikimediaConnection c) throws Exception {
+			MediaWikiConnection c) throws Exception {
 		ArrayList<Sitelink> a = r.request(c);
 		return (a.size() == 0 ? null : a.get(0));
 	}

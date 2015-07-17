@@ -1,6 +1,6 @@
 package mediawiki.task;
 
-import mediawiki.WikimediaConnection;
+import mediawiki.MediaWikiConnection;
 import mediawiki.info.Article;
 import mediawiki.request.ContentRequest;
 import mediawiki.request.EditRequest;
@@ -12,8 +12,8 @@ public class AuthorityControlToWikipediaTask extends WikipediaWikidataTask {
 
 	private ACtWPConfiguration config;
 	
-	public AuthorityControlToWikipediaTask(WikimediaConnection wikidata,
-			WikimediaConnection wikipedia, ACtWPConfiguration config) {
+	public AuthorityControlToWikipediaTask(MediaWikiConnection wikidata,
+			MediaWikiConnection wikipedia, ACtWPConfiguration config) {
 		super(wikidata, wikipedia);
 		this.config = config;
 	}

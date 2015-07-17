@@ -17,11 +17,11 @@ public class GlobalWikimediaConnection {
 	public GlobalWikimediaConnection() {
 	}
 
-	public <T> T request(Project p, WikimediaRequest<T> r) throws Exception{
+	public <T> T request(Project p, MediaWikiRequest<T> r) throws Exception{
 		return openConnection(p).request(r);
 	}
 	
-	private WikimediaConnection applySetting(WikimediaConnection connection){
+	private MediaWikiConnection applySetting(MediaWikiConnection connection){
 		connection.putCookies(centralcookies);
 		if(login)
 			connection.setLoggedIn(login);
@@ -33,20 +33,20 @@ public class GlobalWikimediaConnection {
 		return connection;
 	}
 	
-	public WikimediaConnection openConnection(Project p){
-		WikimediaConnection connection = new WikimediaConnection(p);
+	public MediaWikiConnection openConnection(Project p){
+		MediaWikiConnection connection = new MediaWikiConnection(p);
 		connection = applySetting(connection);
 		return connection;
 	}
 	
-	public WikimediaConnection openConnection(String l, String p){
-		WikimediaConnection connection = new WikimediaConnection(l,p);
+	public MediaWikiConnection openConnection(String l, String p){
+		MediaWikiConnection connection = new MediaWikiConnection(l,p);
 		connection = applySetting(connection);
 		return connection;
 	}
 	
-	public WikimediaConnection openConnection(String api){
-		WikimediaConnection connection = new WikimediaConnection(api);
+	public MediaWikiConnection openConnection(String api){
+		MediaWikiConnection connection = new MediaWikiConnection(api);
 		connection = applySetting(connection);
 		return connection;
 	}

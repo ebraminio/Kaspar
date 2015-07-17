@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Scanner;
 
-import mediawiki.WikimediaConnection;
+import mediawiki.MediaWikiConnection;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Sitelink;
 import mediawiki.request.ArticleForNameRequest;
@@ -24,12 +24,12 @@ public class AutolistSelector implements ACtWPSelector {
 	
 	private Scanner s = null;
 	
-	private WikimediaConnection wikidata;
-	private WikimediaConnection wikipedia;
+	private MediaWikiConnection wikidata;
+	private MediaWikiConnection wikipedia;
 	
 	@Override
-	public void prepare(WikimediaConnection wikidata,
-			WikimediaConnection wikipedia) {
+	public void prepare(MediaWikiConnection wikidata,
+			MediaWikiConnection wikipedia) {
 		this.wikidata = wikidata;
 		this.wikipedia = wikipedia;
 	}

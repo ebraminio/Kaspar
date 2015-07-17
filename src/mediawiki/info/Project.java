@@ -67,4 +67,14 @@ public class Project {
 		api = api.replaceAll("\\.", "");
 		return new Project(api);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		if(!(obj instanceof Project))
+			return false;
+		return site.equals(((Project)obj).site);
+	}
+
 }

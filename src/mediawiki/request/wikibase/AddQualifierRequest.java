@@ -2,15 +2,15 @@ package mediawiki.request.wikibase;
 
 import org.json.JSONException;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Statement;
 import mediawiki.request.ManipulativeRequest;
 import mediawiki.request.TokenRequest;
 
-public class AddQualifierRequest extends WikimediaRequest implements ManipulativeRequest{
+public class AddQualifierRequest extends MediaWikiRequest implements ManipulativeRequest{
 
 	public AddQualifierRequest(Statement target, Claim qualifier) throws JSONException{
 		setProperty("claim", target.getId());
@@ -20,9 +20,9 @@ public class AddQualifierRequest extends WikimediaRequest implements Manipulativ
 	}
 	
 	@Override
-	public Object request(WikimediaConnection c) throws Exception {
+	public Object request(MediaWikiConnection c) throws Exception {
 		String token = (String) c.request(new TokenRequest());
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "wbsetqualifier");
 		p.putData("token", token);

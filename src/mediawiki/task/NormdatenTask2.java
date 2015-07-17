@@ -20,9 +20,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mediawiki.ContinuingRequest;
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaException;
-import mediawiki.WikimediaUtil;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiException;
+import mediawiki.MediaWikiUtil;
 import mediawiki.info.Article;
 import mediawiki.info.Project;
 import mediawiki.info.wikibase.Claim;
@@ -55,7 +55,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 	private NormdatenTask2Configuration config;
 	private HashSet<NormdatenTask2ErrorHandler> handlers = new HashSet<>();
 	
-	public NormdatenTask2(WikimediaConnection wikidata, WikimediaConnection wikipedia, NormdatenTask2Configuration c){
+	public NormdatenTask2(MediaWikiConnection wikidata, MediaWikiConnection wikipedia, NormdatenTask2Configuration c){
 		super(wikidata, wikipedia);
 		
 		config = c;
@@ -165,7 +165,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 									if(! value.matches(ac.getJSONObject("LCCN").getString("pattern"))){
 										value = value.replaceAll("\\-", "/");
 										value = value.replaceAll("^(|n|nb|nr|no|ns|sh|sj|sn)(.*)$", "$1/$2");
-										value = WikimediaUtil.formatLCCN(value);
+										value = MediaWikiUtil.formatLCCN(value);
 									}
 									if(value != null && value.matches(ac.getJSONObject("LCCN").getString("pattern")) ) {
 										Statement s = getConnection().request(new CreateClaimRequest(base, new Claim(ac.getJSONObject("LCCN").getInt("property"), new StringSnak(value))));
@@ -184,7 +184,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 										continue;
 									}
 								}else{
-									String[] lccns = WikimediaUtil.splitLCCN(lccn);
+									String[] lccns = MediaWikiUtil.splitLCCN(lccn);
 									if(! reachable(new URL("http://www.worldcat.org/identities/lccn-"+URLEncoder.encode(lccns[0]+"-"+lccns[1]+"-"+lccns[2], "UTF-8")))) {
 										newParameters.remove(e.getKey());
 										System.out.println("** 404 Error for "+e.getKey()+" value "+lccns[0]+"-"+lccns[1]+"-"+lccns[2]+". ready for removal");
@@ -222,7 +222,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 								}
 								continue;
 							}
-							String value = e.getKey().equals("LCCN") && ! e.getValue().matches(ac.getJSONObject(e.getKey()).getString("pattern")) ? WikimediaUtil.formatLCCN(e.getValue()) : e.getValue();
+							String value = e.getKey().equals("LCCN") && ! e.getValue().matches(ac.getJSONObject(e.getKey()).getString("pattern")) ? MediaWikiUtil.formatLCCN(e.getValue()) : e.getValue();
 							if(e.getKey().equals("LCCN") && value == null)
 								value = e.getValue();
 							if(e.getKey().equalsIgnoreCase("ISNI")){
@@ -361,7 +361,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 								getWikipediaConnection().request(new EditRequest(a, nw, config.getSummary()));
 								throwWarning(new NormdatenTask2Exception(a, "template replaced", NormdatenTask2ExceptionLevel.FINAL));
 								System.out.println("** template replaced");
-							}catch(WikimediaException e3){
+							}catch(MediaWikiException e3){
 								throwWarning(new NormdatenTask2Exception(a, "edit request rejected", NormdatenTask2ExceptionLevel.PROBLEM));
 							}
 						}
@@ -431,7 +431,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 		return newidentifier;
 	}
 
-	public class NormdatenTask2Exception extends WikimediaException {
+	public class NormdatenTask2Exception extends MediaWikiException {
 		
 		private Article article;
 		private String type;

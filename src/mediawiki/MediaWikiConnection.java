@@ -16,7 +16,7 @@ import mediawiki.request.LogoutRequest;
 import mediawiki.request.ManipulativeRequest;
 
 
-public class WikimediaConnection implements Cloneable {
+public class MediaWikiConnection implements Cloneable {
 
 	private String apihref = "";
 	
@@ -26,7 +26,7 @@ public class WikimediaConnection implements Cloneable {
 	private boolean teststate = false;
 	
 	private HashMap<String, String> cookies = new HashMap<>();
-	private Map<Class<? extends WikimediaRequest<?>>, Integer> statistic = new HashMap<>();
+	private Map<Class<? extends MediaWikiRequest<?>>, Integer> statistic = new HashMap<>();
 	private final Object editsynchronizer = new Object();
 	
 	private ArrayList<RequestListener> listener = new ArrayList<>();
@@ -35,19 +35,19 @@ public class WikimediaConnection implements Cloneable {
 	private long editInterval = 0L;
 	private Date lastEdit = null;
 	
-	public WikimediaConnection(String apihref){
+	public MediaWikiConnection(String apihref){
 		setApihref(apihref);
 	}
 	
-	public WikimediaConnection(String language, String wikiname){
+	public MediaWikiConnection(String language, String wikiname){
 		this("https://"+language+"."+wikiname+"/w/api.php");
 	}
 	
-	public WikimediaConnection(Project s){
+	public MediaWikiConnection(Project s){
 		this(s.getURLPrefix(),s.getURLSuffix());
 	}
 	
-	public <T> T request(WikimediaRequest<T> r) throws Exception{
+	public <T> T request(MediaWikiRequest<T> r) throws Exception{
 		if(r instanceof LoginRequest)
 			setLoginRequest((LoginRequest)r);
 		T o = null;
@@ -80,11 +80,11 @@ public class WikimediaConnection implements Cloneable {
 		this.apihref = apihref;
 	}
 
-	private void log(WikimediaRequest<?> r){
+	private void log(MediaWikiRequest<?> r){
 		if(statistic.containsKey(r.getClass())){
-			statistic.put((Class<? extends WikimediaRequest<?>>) r.getClass(), statistic.get(r.getClass())+1);
+			statistic.put((Class<? extends MediaWikiRequest<?>>) r.getClass(), statistic.get(r.getClass())+1);
 		}else{
-			statistic.put((Class<? extends WikimediaRequest<?>>) r.getClass(), 1);
+			statistic.put((Class<? extends MediaWikiRequest<?>>) r.getClass(), 1);
 		}
 	}
 	
@@ -142,7 +142,7 @@ public class WikimediaConnection implements Cloneable {
 		return request(getLoginRequest());
 	}
 	
-	public Map<Class<? extends WikimediaRequest<?>>, Integer> getStatistic(){
+	public Map<Class<? extends MediaWikiRequest<?>>, Integer> getStatistic(){
 		return statistic;
 	}
 
@@ -154,7 +154,7 @@ public class WikimediaConnection implements Cloneable {
 		listener.add(r);
 	}
 	
-	public int getStatisticOf(Class<? extends WikimediaRequest<?>> s){
+	public int getStatisticOf(Class<? extends MediaWikiRequest<?>> s){
 		return statistic.containsKey(s) ? statistic.get(s) : 0;
 	}
 	
@@ -165,7 +165,7 @@ public class WikimediaConnection implements Cloneable {
 
 	public int getEditCount(){
 		int i = 0;
-		for(Entry<Class<? extends WikimediaRequest<?>>, Integer> e : statistic.entrySet()){
+		for(Entry<Class<? extends MediaWikiRequest<?>>, Integer> e : statistic.entrySet()){
 			for(Class c : e.getKey().getInterfaces()){
 				if(c.equals(ManipulativeRequest.class)){
 					i += e.getValue();

@@ -1,13 +1,13 @@
 package mediawiki;
 
-public class WikimediaException extends RuntimeException {
+public class MediaWikiException extends RuntimeException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5662338958239141435L;
 
-	public WikimediaException(String string) {
+	public MediaWikiException(String string) {
 		super(string);
 	}
 

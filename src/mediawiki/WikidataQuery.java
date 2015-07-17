@@ -47,7 +47,7 @@ public class WikidataQuery {
 			String r = p.request();
 			o = new JSONObject(r);
 			if(!o.getJSONObject("status").getString("error").equals("OK")){
-				throw new WikimediaException("WMFLABS-Server Message: "+o.getJSONObject("status").getString("error"));
+				throw new MediaWikiException("WMFLABS-Server Message: "+o.getJSONObject("status").getString("error"));
 			}
 		}catch(IOException io){
 			throw new IOException(io.getMessage()+" for query: "+query, io);
@@ -65,7 +65,7 @@ public class WikidataQuery {
 		String r = p.request();
 		JSONObject o = new JSONObject(r);
 		if(!o.getJSONObject("status").getString("error").equals("OK")){
-			throw new WikimediaException("WMFLABS-Server Message: "+o.getJSONObject("status").getString("error"));
+			throw new MediaWikiException("WMFLABS-Server Message: "+o.getJSONObject("status").getString("error"));
 		}
 		return o.getJSONObject("status").getInt("items");
 	}

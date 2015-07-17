@@ -1,19 +1,19 @@
 package mediawiki.request;
 
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 
-public class UserDailyContributionsRequest extends WikimediaRequest<Integer> {
+public class UserDailyContributionsRequest extends MediaWikiRequest<Integer> {
 
 	public UserDailyContributionsRequest(String user){
 		setProperty("user", user);
 	}
 	
 	@Override
-	public Integer request(WikimediaConnection c) throws Exception {
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+	public Integer request(MediaWikiConnection c) throws Exception {
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "userdailycontribs");
 		return Integer.parseInt(p.requestDocument().getRootElement().getChildren("userdailycontribs").get(0).getAttribute("totalEdits").getValue());

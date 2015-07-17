@@ -15,18 +15,18 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
-import mediawiki.WikimediaTask;
-import mediawiki.WikimediaThread;
+import mediawiki.MediaWikiTask;
+import mediawiki.MediaWikiThread;
 import mediawiki.event.CompletedListener;
 import mediawiki.event.ProgressChangeEvent;
 import mediawiki.event.ProgressChangeListener;
 
-public class TaskPanel extends JPanel implements ProgressChangeListener<WikimediaTask,Double>, CompletedListener {
+public class TaskPanel extends JPanel implements ProgressChangeListener<MediaWikiTask,Double>, CompletedListener {
 
 	private JProgressBar progress = null;
-	private WikimediaThread task = null;
+	private MediaWikiThread task = null;
 	
-	public TaskPanel(WikimediaThread t){
+	public TaskPanel(MediaWikiThread t){
 		task = t;
 		setLayout(new BorderLayout());
 		setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
@@ -63,7 +63,7 @@ public class TaskPanel extends JPanel implements ProgressChangeListener<Wikimedi
 	}
 
 	@Override
-	public void progressChanged(ProgressChangeEvent<WikimediaTask,Double> r) {
+	public void progressChanged(ProgressChangeEvent<MediaWikiTask,Double> r) {
 		progress.setValue(r.getReferer().getDone());
 		progress.setMaximum(r.getReferer().getTogo());
 	}

@@ -2,14 +2,14 @@ package mediawiki.request.wikibase;
 
 import java.util.Map.Entry;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.wikibase.TranslatedContent;
 import mediawiki.request.ManipulativeRequest;
 import mediawiki.request.TokenRequest;
 
-public class SetLabelRequest extends WikimediaRequest implements ManipulativeRequest {
+public class SetLabelRequest extends MediaWikiRequest implements ManipulativeRequest {
 
 	private TranslatedContent<String> labels;
 	
@@ -29,10 +29,10 @@ public class SetLabelRequest extends WikimediaRequest implements ManipulativeReq
 	
 	
 	@Override
-	public Object request(WikimediaConnection c) throws Exception {
+	public Object request(MediaWikiConnection c) throws Exception {
 		for(Entry<String, String> e : labels){
 			String token = (String) c.request(new TokenRequest());
-			WikimediaPostRequest p = new WikimediaPostRequest(c);
+			MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 			p.putData(getProperties());
 			p.putData("action", "wbsetlabel");
 			p.putData("language", e.getKey());

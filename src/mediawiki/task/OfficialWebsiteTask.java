@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import mediawiki.WikimediaConnection;
+import mediawiki.MediaWikiConnection;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
@@ -21,8 +21,8 @@ import mediawiki.request.wikibase.SetReferenceRequest;
 
 public class OfficialWebsiteTask extends WikipediaWikidataTask {
 
-	public OfficialWebsiteTask(WikimediaConnection wikidata,
-			WikimediaConnection wikipedia) {
+	public OfficialWebsiteTask(MediaWikiConnection wikidata,
+			MediaWikiConnection wikipedia) {
 		super(wikidata, wikipedia);
 	}
 

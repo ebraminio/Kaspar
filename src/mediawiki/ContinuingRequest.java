@@ -7,7 +7,7 @@ import java.util.Map;
 import javat.xml.Document;
 import javat.xml.Element;
 
-abstract public class ContinuingRequest<T> extends WikimediaRequest<List<T>> {
+abstract public class ContinuingRequest<T> extends MediaWikiRequest<List<T>> {
 
 	private String group;
 	private String entry;
@@ -22,9 +22,9 @@ abstract public class ContinuingRequest<T> extends WikimediaRequest<List<T>> {
 	}
 	
 	@Override
-	public List<T> request(WikimediaConnection c) throws Exception {
+	public List<T> request(MediaWikiConnection c) throws Exception {
 		ArrayList<T> r = new ArrayList<>();
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData(getRequiredParameters());
 		p.putData("continue","");

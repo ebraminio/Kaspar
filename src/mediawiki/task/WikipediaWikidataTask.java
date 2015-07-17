@@ -1,22 +1,22 @@
 package mediawiki.task;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaTask;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiTask;
 
-public abstract class WikipediaWikidataTask extends WikimediaTask {
+public abstract class WikipediaWikidataTask extends MediaWikiTask {
 
-	private WikimediaConnection wikipedia;
+	private MediaWikiConnection wikipedia;
 	
-	public WikipediaWikidataTask(WikimediaConnection wikidata, WikimediaConnection wikipedia){
+	public WikipediaWikidataTask(MediaWikiConnection wikidata, MediaWikiConnection wikipedia){
 		super(wikidata);
 		this.wikipedia = wikipedia;
 	}
 
-	public WikimediaConnection getWikipediaConnection() {
+	public MediaWikiConnection getWikipediaConnection() {
 		return wikipedia;
 	}
 
-	public WikimediaConnection getWikidataConnection(){
+	public MediaWikiConnection getWikidataConnection(){
 		return getConnection();
 	}
 

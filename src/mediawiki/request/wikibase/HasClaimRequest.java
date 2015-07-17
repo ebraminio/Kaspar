@@ -2,13 +2,13 @@ package mediawiki.request.wikibase;
 
 import javat.xml.Document;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.wikibase.Property;
 
 
-public class HasClaimRequest extends WikimediaRequest<Boolean> {
+public class HasClaimRequest extends MediaWikiRequest<Boolean> {
 
 	public HasClaimRequest(String entity) {
 		setProperty("entity", entity);
@@ -20,8 +20,8 @@ public class HasClaimRequest extends WikimediaRequest<Boolean> {
 	}
 
 	@Override
-	public Boolean request(WikimediaConnection c) throws Exception {
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+	public Boolean request(MediaWikiConnection c) throws Exception {
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "wbgetclaims");
 		Document d = p.requestDocument();

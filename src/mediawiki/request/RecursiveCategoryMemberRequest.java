@@ -4,12 +4,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.Article;
 
 public class RecursiveCategoryMemberRequest extends
-		WikimediaRequest<Set<Article>> {
+		MediaWikiRequest<Set<Article>> {
 
 	private String category;
 	private boolean includecats = false;
@@ -26,11 +26,11 @@ public class RecursiveCategoryMemberRequest extends
 	}
 	
 	@Override
-	public Set<Article> request(WikimediaConnection c) throws Exception {
+	public Set<Article> request(MediaWikiConnection c) throws Exception {
 		return handleSubcategory(c, category);
 	}
 	
-	private Set<Article> handleSubcategory(WikimediaConnection c, String cat) throws Exception{
+	private Set<Article> handleSubcategory(MediaWikiConnection c, String cat) throws Exception{
 		HashSet<Article> h = new HashSet<>();
 		List<Article> l = c.request(new CategoryMemberRequest(cat));
 		for(Article a : l){

@@ -31,8 +31,8 @@ public class Sitelink {
 		this.title = title;
 	}
 
-	public String getProject(){
-		return site.getProject();
+	public Project getProject(){
+		return site;
 	}
 	
 	public String getLanguage(){

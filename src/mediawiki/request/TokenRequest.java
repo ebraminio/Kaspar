@@ -2,12 +2,12 @@ package mediawiki.request;
 
 import javat.xml.Element;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 
 
-public class TokenRequest extends WikimediaRequest<String> {
+public class TokenRequest extends MediaWikiRequest<String> {
 
 	private String type = "csrf";
 	
@@ -20,8 +20,8 @@ public class TokenRequest extends WikimediaRequest<String> {
 	}
 
 	@Override
-	public String request(WikimediaConnection c) throws Exception {
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+	public String request(MediaWikiConnection c) throws Exception {
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData("action", "query");
 		p.putData("meta", "tokens");
 		p.putData("type", getType());

@@ -8,11 +8,11 @@ import java.util.Map;
 import javat.xml.Document;
 import javat.xml.Element;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.Article;
 
-public class GetTemplatesValuesRequest extends WikimediaRequest<List<Map<String, String>>> {
+public class GetTemplatesValuesRequest extends MediaWikiRequest<List<Map<String, String>>> {
 
 	private String title;
 	private String template;
@@ -29,7 +29,7 @@ public class GetTemplatesValuesRequest extends WikimediaRequest<List<Map<String,
 	}
 	
 	@Override
-	public List<Map<String, String>> request(WikimediaConnection c)
+	public List<Map<String, String>> request(MediaWikiConnection c)
 			throws Exception {
 		List<Map<String, String>> res = new ArrayList<>();
 		

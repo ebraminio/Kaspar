@@ -14,9 +14,9 @@ import javat.xml.Element;
 import datasets.in.GND;
 import datasets.in.MARC;
 import mediawiki.WikidataQuery;
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaTask;
-import mediawiki.WikimediaUtil;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiTask;
+import mediawiki.MediaWikiUtil;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
 import mediawiki.info.wikibase.Reference;
@@ -32,16 +32,16 @@ import mediawiki.request.wikibase.HasClaimRequest;
 import mediawiki.request.wikibase.SetLabelRequest;
 import mediawiki.request.wikibase.SetReferenceRequest;
 
-public class GNDSetInformationTask extends WikimediaTask {
+public class GNDSetInformationTask extends MediaWikiTask {
 
-	public GNDSetInformationTask(WikimediaConnection con) {
+	public GNDSetInformationTask(MediaWikiConnection con) {
 		super(con);
 	}
 
 	@Override
 	public void run() {
 		try{
-			WikimediaConnection wikidata = getConnection();
+			MediaWikiConnection wikidata = getConnection();
 			
 			
 			SimpleDateFormat log = new SimpleDateFormat("HH:mm:ss");
@@ -83,7 +83,7 @@ public class GNDSetInformationTask extends WikimediaTask {
 					
 					if(e.getChildren("dateOfBirth").size() > 0){
 						marc = GND.getMARCEntry(gnd);
-						Statement s = WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(new Property(569), new DateSnak(GND.parseWikibaseDate(e.getChildren("dateOfBirth").get(0).getText()))), ref);
+						Statement s = MediaWikiUtil.addTrustedStatement(wikidata, wikibase, new Claim(new Property(569), new DateSnak(GND.parseWikibaseDate(e.getChildren("dateOfBirth").get(0).getText()))), ref);
 						if(isGeborenCa(marc) && s != null){
 							getConnection().request(new AddQualifierRequest(s, new Claim(1480,5727902)));
 							System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\tCirca-Qualifier created");
@@ -91,7 +91,7 @@ public class GNDSetInformationTask extends WikimediaTask {
 					}
 					if(e.getChildren("dateOfDeath").size() > 0){
 						marc = (marc != null ? marc : GND.getMARCEntry(gnd));
-						Statement s = WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(new Property(570), new DateSnak(GND.parseWikibaseDate(e.getChildren("dateOfDeath").get(0).getText()))), ref);
+						Statement s = MediaWikiUtil.addTrustedStatement(wikidata, wikibase, new Claim(new Property(570), new DateSnak(GND.parseWikibaseDate(e.getChildren("dateOfDeath").get(0).getText()))), ref);
 						if(isGestorbenCa(marc) && s != null) {
 							getConnection().request(new AddQualifierRequest(s, new Claim(1480,5727902)));
 							System.out.println(Thread.currentThread().getName()+"\t["+log.format(new Date())+"]\tCirca-Qualifier created");
@@ -109,7 +109,7 @@ public class GNDSetInformationTask extends WikimediaTask {
 						}
 						if(i != null){
 							Claim claim = new Claim(new Property(21),i);
-							WikimediaUtil.addTrustedStatement(wikidata, wikibase, claim, ref);
+							MediaWikiUtil.addTrustedStatement(wikidata, wikibase, claim, ref);
 						}
 					}
 				/*	VIAF disabled! 
@@ -153,31 +153,31 @@ public class GNDSetInformationTask extends WikimediaTask {
 						switch(e.getChildren("academicDegree").get(0).getText()){
 						case "Doktor":
 						case "Dr." : 
-							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(512,849697), ref);
+							MediaWikiUtil.addTrustedStatement(wikidata, wikibase, new Claim(512,849697), ref);
 							break;
 						case "Dr. iur.":
 						case "Dr. jur.":
-							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(512,959320), ref);
+							MediaWikiUtil.addTrustedStatement(wikidata, wikibase, new Claim(512,959320), ref);
 							break;
 						case "Dr. med":
 						case "Dr. med.":
-							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(512,913404), ref);
+							MediaWikiUtil.addTrustedStatement(wikidata, wikibase, new Claim(512,913404), ref);
 							break;
 						case "Prof.":
 						case "Prof":
 						case "Professor":
 						case "Professorin":
-							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(106,121594), ref);
+							MediaWikiUtil.addTrustedStatement(wikidata, wikibase, new Claim(106,121594), ref);
 							break; 
 						case "Prof. Dr.":
 						case "Prof., Dr.":
 						case "Dr., Professor":
 						case "Prof.Dr.":
-							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(106,121594), ref);
-							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(512,849697), ref);
+							MediaWikiUtil.addTrustedStatement(wikidata, wikibase, new Claim(106,121594), ref);
+							MediaWikiUtil.addTrustedStatement(wikidata, wikibase, new Claim(512,849697), ref);
 							break;
 						case "Graf":
-							WikimediaUtil.addTrustedStatement(wikidata, wikibase, new Claim(97,28989), ref);
+							MediaWikiUtil.addTrustedStatement(wikidata, wikibase, new Claim(97,28989), ref);
 							break;
 						default:
 							System.out.println(e.getChildren("academicDegree").get(0).getText());
@@ -292,7 +292,7 @@ public class GNDSetInformationTask extends WikimediaTask {
 		return false;
 	}
 	
-	private static void handleComplexImport(WikimediaConnection wikidata, String base, Element e, String tag, int prop, Reference ref, String referer, String condition) throws IOException, JSONException, Exception{
+	private static void handleComplexImport(MediaWikiConnection wikidata, String base, Element e, String tag, int prop, Reference ref, String referer, String condition) throws IOException, JSONException, Exception{
 		if(! (e.getChildren(tag).size() > 0 && e.getChildren(tag).get(0).getChildren("Description").size() > 0))
 			return;
 		ArrayList<Claim> cs = new ArrayList<>();
@@ -307,7 +307,7 @@ public class GNDSetInformationTask extends WikimediaTask {
 		}
 		if(wikidata.request(new HasClaimRequest(base, new Property(prop))) ){
 			for(Claim c : cs){
-				WikimediaUtil.addTrustedStatement(wikidata, base, c, ref);
+				MediaWikiUtil.addTrustedStatement(wikidata, base, c, ref);
 				System.out.println("created or referenced: "+c);
 			}
 		}else{

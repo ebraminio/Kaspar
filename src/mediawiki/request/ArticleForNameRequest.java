@@ -2,13 +2,13 @@ package mediawiki.request;
 
 import javat.xml.Document;
 import javat.xml.Element;
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Sitelink;
 
-public class ArticleForNameRequest extends WikimediaRequest<Article> {
+public class ArticleForNameRequest extends MediaWikiRequest<Article> {
 
 	public ArticleForNameRequest(String title){
 		setProperty("titles", title);
@@ -19,8 +19,8 @@ public class ArticleForNameRequest extends WikimediaRequest<Article> {
 	}
 	
 	@Override
-	public Article request(WikimediaConnection c) throws Exception {
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+	public Article request(MediaWikiConnection c) throws Exception {
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "query");
 		p.putData("prop", "info");

@@ -8,11 +8,11 @@ import java.util.Map.Entry;
 import javat.xml.Document;
 
 
-public class WikimediaPostRequest extends PostRequest {
+public class MediaWikiPostRequest extends PostRequest {
 
-	private WikimediaConnection con = null;
+	private MediaWikiConnection con = null;
 	
-	public WikimediaPostRequest(WikimediaConnection c) throws UnsupportedEncodingException {
+	public MediaWikiPostRequest(MediaWikiConnection c) throws UnsupportedEncodingException {
 		super(c.getApihref());
 		this.con = c;
 		putData("format", "xml");
@@ -48,7 +48,7 @@ public class WikimediaPostRequest extends PostRequest {
 				System.out.println("Relogin initiated...");
 				con.relogin();
 			}
-			throw new WikimediaException("Server Message from "+con.getApihref()+": "+error);
+			throw new MediaWikiException("Server Message from "+con.getApihref()+": "+error);
 		}
 		return d;
 	}

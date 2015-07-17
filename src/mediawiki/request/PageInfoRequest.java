@@ -6,20 +6,20 @@ import java.util.Map;
 import javat.xml.Attribute;
 import javat.xml.Element;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 
-public class PageInfoRequest extends WikimediaRequest<Map<String, String>> {
+public class PageInfoRequest extends MediaWikiRequest<Map<String, String>> {
 
 	public PageInfoRequest(String title){
 		setProperty("titles", title);
 	}
 	
 	@Override
-	public Map<String, String> request(WikimediaConnection c)
+	public Map<String, String> request(MediaWikiConnection c)
 			throws Exception {
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "query");
 		p.putData("prop", "info");

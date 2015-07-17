@@ -3,12 +3,12 @@ package mediawiki.request;
 import java.io.ByteArrayInputStream;
 import javat.xml.Document;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 
 
-public class ParseTemplatesRequest extends WikimediaRequest<Document> {
+public class ParseTemplatesRequest extends MediaWikiRequest<Document> {
 
 	public ParseTemplatesRequest(String wikitext) {
 		setProperty("text", wikitext);
@@ -20,8 +20,8 @@ public class ParseTemplatesRequest extends WikimediaRequest<Document> {
 	}
 	
 	@Override
-	public Document request(WikimediaConnection c) throws Exception {
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+	public Document request(MediaWikiConnection c) throws Exception {
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "expandtemplates");
 		p.putData("includecomments","0");

@@ -2,11 +2,11 @@ package mediawiki.request;
 
 import java.net.URL;
 import javat.xml.Document;
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 
-public class ImageURLRequest extends WikimediaRequest<URL> {
+public class ImageURLRequest extends MediaWikiRequest<URL> {
 
 	public ImageURLRequest(String name, int width) {
 		setProperty("titles", name);
@@ -14,8 +14,8 @@ public class ImageURLRequest extends WikimediaRequest<URL> {
 	}
 	
 	@Override
-	public URL request(WikimediaConnection c) throws Exception {
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+	public URL request(MediaWikiConnection c) throws Exception {
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "query");
 		p.putData("prop", "imageinfo");

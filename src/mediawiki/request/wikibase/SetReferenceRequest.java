@@ -2,9 +2,9 @@ package mediawiki.request.wikibase;
 
 import javat.xml.Document;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
 import mediawiki.info.wikibase.Reference;
@@ -18,7 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class SetReferenceRequest extends WikimediaRequest implements ManipulativeRequest {
+public class SetReferenceRequest extends MediaWikiRequest implements ManipulativeRequest {
 
 	@Deprecated
 	public SetReferenceRequest(String id, Property prop, Snak<?> e) throws JSONException {
@@ -55,9 +55,9 @@ public class SetReferenceRequest extends WikimediaRequest implements Manipulativ
 	}
 
 	@Override
-	public Object request(WikimediaConnection c) throws Exception {
+	public Object request(MediaWikiConnection c) throws Exception {
 		String token = (String) c.request(new TokenRequest("csrf"));
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "wbsetreference");
 		p.putData("token", token);

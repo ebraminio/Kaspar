@@ -5,21 +5,21 @@ import java.util.ArrayList;
 import javat.xml.Document;
 import javat.xml.Element;
 
-import mediawiki.WikimediaConnection;
-import mediawiki.WikimediaPostRequest;
-import mediawiki.WikimediaRequest;
+import mediawiki.MediaWikiConnection;
+import mediawiki.MediaWikiPostRequest;
+import mediawiki.MediaWikiRequest;
 import mediawiki.info.Project;
 import mediawiki.info.wikibase.Sitelink;
 
-public class GetSitelinksRequest extends WikimediaRequest<ArrayList<Sitelink>> {
+public class GetSitelinksRequest extends MediaWikiRequest<ArrayList<Sitelink>> {
 
 	public GetSitelinksRequest(String base){
 		setProperty("ids", base);
 	}
 	
 	@Override
-	public ArrayList<Sitelink> request(WikimediaConnection c) throws Exception {
-		WikimediaPostRequest p = new WikimediaPostRequest(c);
+	public ArrayList<Sitelink> request(MediaWikiConnection c) throws Exception {
+		MediaWikiPostRequest p = new MediaWikiPostRequest(c);
 		p.putData(getProperties());
 		p.putData("action", "wbgetentities");
 		p.putData("props", "sitelinks");

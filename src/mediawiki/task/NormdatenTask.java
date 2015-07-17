@@ -8,7 +8,7 @@ import java.util.Map;
 
 import main.GNDLoad;
 import mediawiki.ArticleDenier;
-import mediawiki.WikimediaConnection;
+import mediawiki.MediaWikiConnection;
 import mediawiki.info.Article;
 import mediawiki.info.wikibase.Claim;
 import mediawiki.info.wikibase.Property;
@@ -28,7 +28,7 @@ public class NormdatenTask extends WikipediaWikidataTask {
 	private Reference ref;
 	private ArticleDenier denier;
 	
-	public NormdatenTask(WikimediaConnection wikidata, WikimediaConnection wikipedia){
+	public NormdatenTask(MediaWikiConnection wikidata, MediaWikiConnection wikipedia){
 		super(wikidata, wikipedia);
 		
 		ref = new Reference(new Property(143), new ItemSnak(328));
