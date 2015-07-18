@@ -3,6 +3,8 @@ package mediawiki.request;
 import java.util.HashMap;
 import java.util.Map;
 
+import util.Util;
+
 import javat.xml.Element;
 
 import mediawiki.ContinuingRequest;
@@ -17,16 +19,11 @@ public class CategoryMemberRequest extends ContinuingRequest<Article> {
 		setProperty("cmlimit", 5000);
 	}
 	
-	public CategoryMemberRequest(String kat, int namespace) {
+	public CategoryMemberRequest(String kat, Integer...namespace) {
 		this(kat);
-		setProperty("cmnamespace", namespace);
+		setProperty("cmnamespace", Util.implode(namespace, "|"));
 	}
 	
-	public CategoryMemberRequest(String kat, int namespace, int limit){
-		this(kat,namespace);
-		setLimit(limit);
-	}
-
 	@Override
 	protected Article parse(Element e) {
 		return Article.convert(e);

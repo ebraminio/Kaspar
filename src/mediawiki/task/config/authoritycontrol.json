@@ -59,6 +59,11 @@
           "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
           "property": 227
      },
+     "GKD-V1": {
+          "formatter": "http://d-nb.info/gnd/$1",
+          "pattern": "(1|10)\\d{7}[0-9X]|[47]\\d{6}-\\d|[1-9]\\d{0,7}-[0-9X]|3\\d{7}[0-9X]",
+          "property": 227
+     },
      "NSK": {
           "pattern": "\\d{9}",
           "property": 1375

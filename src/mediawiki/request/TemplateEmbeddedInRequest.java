@@ -3,6 +3,8 @@ package mediawiki.request;
 import java.util.HashMap;
 import java.util.Map;
 
+import util.Util;
+
 import javat.xml.Element;
 import mediawiki.ContinuingRequest;
 import mediawiki.info.Article;
@@ -10,9 +12,9 @@ import mediawiki.info.Article;
 public class TemplateEmbeddedInRequest extends ContinuingRequest<Article> {
 
 	
-	public TemplateEmbeddedInRequest(String template, int namespace){
+	public TemplateEmbeddedInRequest(String template, Integer...namespace){
 		this(template);
-		setProperty("einamespace", namespace);
+		setProperty("einamespace", Util.implode(namespace, "|"));
 	}
 	
 	public TemplateEmbeddedInRequest(String template) {

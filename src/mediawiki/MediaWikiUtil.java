@@ -53,4 +53,5 @@ public class MediaWikiUtil {
 			return null;
 		}
 	}
+
 }

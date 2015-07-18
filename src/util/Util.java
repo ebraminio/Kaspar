@@ -12,4 +12,14 @@ public class Util {
 			return in.readLine();
 		}catch(Exception e){return "";}
 	}
+	
+	public static String implode(Object[] o, String glue) {
+		String s = "";
+		for(int i = 0; i < o.length; i++){
+			s += o[i];
+			if(o.length-i > 1)
+				s += glue;
+		}
+		return s;
+	}
 }

@@ -102,6 +102,11 @@ public class NormdatenTask2Configuration {
 			new Reference(new Property(143), new ItemSnak(169514)),
 			"Auktoritetsdata","Katalogreferenser"
 			);
+	public static final NormdatenTask2Configuration ENWIKISOURCE = new NormdatenTask2Configuration(
+			new CategoryMemberRequest("Category:Pages using authority control with parameters", 100, 102),
+			new Reference(new Property(143), new ItemSnak(15156406)),
+			"Authority control"
+			);
 	
 	public static final NormdatenTask2Configuration CAWIKI_TAXON = new NormdatenTask2Configuration(
 			new CategoryMemberRequest("Categoria:Bases de dades taxonòmiques amb paràmetres exportables a Wikidata",0),
