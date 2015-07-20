@@ -63,6 +63,11 @@ public class NormdatenDaemonManager implements Runnable{
 			s.executeUpdate();
 			s.closeOnCompletion();
 		}
+		{
+			Statement s = connection.createStatement();
+			s.execute("CALL `delete_old`();");
+			s.closeOnCompletion();
+		}
 	}
 	
 }

@@ -43,10 +43,10 @@ public class DatabaseHandler implements NormdatenTask2ErrorHandler {
 	public boolean accept(NormdatenTask2Exception e) {
 		switch(e.getLevel()){
 		case INFO:
-		
-			return false;
-		case FINAL:
 		case EXTERNAL:
+			return false;
+			
+		case FINAL:
 		case PROBLEM:
 		case INTERNAL:
 			return true;
