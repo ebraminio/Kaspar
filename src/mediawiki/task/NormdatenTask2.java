@@ -35,6 +35,7 @@ import mediawiki.request.ContentRequest;
 import mediawiki.request.EditRequest;
 import mediawiki.request.GetTemplatesValuesRequest;
 import mediawiki.request.TemplateEmbeddedInRequest;
+import mediawiki.request.TranscludedTemplatesRequest;
 import mediawiki.request.WikiBaseItemRequest;
 import mediawiki.request.wikibase.CreateClaimRequest;
 import mediawiki.request.wikibase.GetSpecificStatementRequest;
@@ -145,6 +146,9 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 							continue;
 						if(e.getKey().equalsIgnoreCase("1") && e.getValue().trim().length() == 0)
 							continue;
+						if(MediaWikiUtil.containsPersianDigits(e.getValue()))
+							e.setValue(MediaWikiUtil.parsePersianNumber(e.getValue()));
+						
 						if(e.getKey().equalsIgnoreCase("WORLDCATID") && e.getValue().trim().length() > 0) {
 							if(! reachable(new URL("http://www.worldcat.org/identities/"+URLEncoder.encode(e.getValue().replaceAll("\\/",""),"UTF-8")))) {
 								newParameters.remove(e.getKey());
@@ -315,7 +319,7 @@ public class NormdatenTask2 extends WikipediaWikidataTask {
 						}
 					}
 					
-					if(getWikipediaConnection().request(new GetTemplatesValuesRequest(a, "bots")).size() !=  0 ){
+					if(getWikipediaConnection().request(new TranscludedTemplatesRequest(a, "Template:bots")).size() !=  0 ){
 						throwWarning(new NormdatenTask2Exception(a, "bot-template found", NormdatenTask2ExceptionLevel.PROBLEM));
 						continue;
 					}

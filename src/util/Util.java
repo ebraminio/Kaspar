@@ -2,6 +2,8 @@ package util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Util {
 
@@ -21,5 +23,10 @@ public class Util {
 				s += glue;
 		}
 		return s;
+	}
+
+	public static int indexOf(Pattern pattern, String s) {
+	    Matcher matcher = pattern.matcher(s);
+	    return matcher.find() ? matcher.start() : -1;
 	}
 }

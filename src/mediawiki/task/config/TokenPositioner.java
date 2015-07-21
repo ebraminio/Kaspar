@@ -12,7 +12,7 @@ public class TokenPositioner implements ACtWPPositioner {
 	@Override
 	public String insert(String content, String template) {
 		boolean flag = true;
-		for(String token : tokens){
+		for(String token : getTokens()){
 			if(content.indexOf(token) > -1){
 				content = content.substring(0,content.indexOf(token))+"{{"+template+"}}\n"+content.substring(content.indexOf(token));
 				flag = false;

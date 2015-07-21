@@ -22,9 +22,21 @@ public class ACtWPConfiguration {
 			"Нормативна контрола"
 		);
 	
+	public static final ACtWPConfiguration FAWIKI = new ACtWPConfiguration(
+			new SimpleAutolistSelector(new Project("fawiki"), "رده:مقاله‌های دارای مستندات", 214, 244, 213, 496, 227, 906, 269, 268, 651, 1053, 1015, 245, 902, 886, 434, 549, 409, 349, 1048, 691, 640, 396, 947, 428, 1222, 1223, 1157, 950, 271, 1362, 781, 1248, 650),
+			new RegexTokenPositioner("\\n\\{\\{[^\\{\\}\\<\\>]*خرد","\\{\\{اطلاعات شخص", "\\{\\{Persondata", "\\{\\{ترتیب‌پیش‌فرض\\:", "\\{\\{DEFAULTSORT\\:", "(?iu)\\[\\[رده:", "\\[\\[Category\\:"), 
+			"داده‌های کتابخانه‌ای"
+		);
+	
+	static {
+		FAWIKI.setSummary("قرار دادن {{داده‌های کتابخانه‌ای}} با اطلاعات ویکی‌داده");
+	}
+	
 	private ACtWPSelector selector;
 	private ACtWPPositioner positioner;
 	private String template;
+	private String summary = null;
+	
 	
 	public ACtWPConfiguration(ACtWPSelector selector, ACtWPPositioner positioner, String template){
 		setPositioner(positioner);
@@ -53,4 +65,16 @@ public class ACtWPConfiguration {
 		this.template = template;
 	}
 
+	
+	public String getSummary() {
+		if(summary == null)
+			return "embed {{"+getTemplate()+"}} with Wikidata information";
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	
 }

@@ -53,5 +53,21 @@ public class MediaWikiUtil {
 			return null;
 		}
 	}
+	
+	private static final String persianDigits = "۰۱۲۳۴۵۶۷۸۹";
+	private static final String arabicDigits 	= "0123456789";
+	
+	public static String parsePersianNumber(String persian) {
+		for(int i = 0; i < persianDigits.length() && i < arabicDigits.length(); i++) 
+			persian = persian.replaceAll(""+persianDigits.charAt(i), ""+arabicDigits.charAt(i));
+		return persian;
+	}
+	
+	public static boolean containsPersianDigits(String s) {
+		for(char c : persianDigits.toCharArray())
+			if(s.indexOf(c) >= 0)
+				return true;
+		return false;
+	}
 
 }
