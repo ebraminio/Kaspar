@@ -90,7 +90,7 @@ public class NormdatenTask2Configuration {
 	public static final NormdatenTask2Configuration FAWIKI = new NormdatenTask2Configuration(
 			new TemplateEmbeddedInRequest("الگو:داده‌های کتابخانه‌ای", 0),
 			new Reference(new Property(143), new ItemSnak(48952)),
-			"مستند کردن","داده‌های کتابخانه‌ای","هنرپیشه-خرد","Authority control","Normdaten"
+			"مستند کردن","داده‌های کتابخانه‌ای","Authority control","Normdaten"
 			);
 	public static final NormdatenTask2Configuration SVWIKI = new NormdatenTask2Configuration(
 			new TemplateEmbeddedInRequest("Mall:Auktoritetsdata", 0),
@@ -114,7 +114,7 @@ public class NormdatenTask2Configuration {
 		CAWIKI.setKeepEmpty(true);
 		FRWIKI.setSummary("Les valeurs des paramètres de {{Autorité}} ont été transférées vers Wikidata");
 		HUWIKI.setSummary("nemzetközi katalógusok a Wikidatából");
-		FAWIKI.setSummary("انتقال مستند کردن به ویکی‌داده");
+		FAWIKI.setSummary("انتقال داده‌های کتابخانه‌ای به ویکی‌داده");
 	}
 	
 	
